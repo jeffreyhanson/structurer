@@ -1,0 +1,17 @@
+# compiled files
+*.o
+*.so
+*.dll
+
+# R profile files
+*.Rproj.user
+*.Rhistory
+
+# log files
+*.log
+
+# linux files
+.directory
+
+# structure files
+seed.txt

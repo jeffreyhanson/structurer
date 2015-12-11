@@ -1,0 +1,41 @@
+Package: structurer
+Type: Package
+Title: Structure Analysis in R
+Version: 1.0.0
+Date: 2015-12-09
+Authors@R: c(person(c("Jeffrey", "O"), "Hanson", email='jeffrey.hanson@uqconnect.edu.au', role = c("aut", "cre")),
+	person(c("Jonathon", "R"), "Rhodes", role = c("aut")),
+	person(c("Hugh", "P"), "Possingham", role = c("aut")),
+	person(c("Richard", "A"), "Fuller", role = c("aut")))
+Description: .
+    Currently, only binary AFLP data is supported.
+Imports:
+    methods,
+    data.table,
+    testthat,
+    parallel,
+    ggplot2
+Depends:
+    R(>= 3.1.0)
+LazyData: true
+License: GPL-3
+VignetteBuilder: knitr
+SystemRequirements: C++11
+Suggests:
+    knitr,
+    rmarkdown
+BinaryFiles: 'structure_linux',
+    'structure_mac',
+    'structure_win.exe'
+Collate:
+    'structurer-internal.R'
+    'misc.R'
+    'generics.R'
+    'StructureReplicate.R'
+    'StructureResults.R'
+    'StructureData.R'
+    'StructureOpts.R'
+    'StructureAnalysis.R'
+    'StructureCollection.R'
+    'dependencies.R'
+RoxygenNote: 5.0.1

@@ -134,8 +134,8 @@ sample.names.StructureCollection <- function(x) {
 #' @rdname sample.membership
 #' @method sample.membership StructureCollection
 #' @export
-sample.membership.StructureCollection <- function(x) {
-	return(x@analyses[[x@best]]@results@summary)
+sample.membership.StructureCollection <- function(x, threshold=NULL) {
+	return(sample.membership(x@analyses[[x@best]], threshold))
 }
 
 #' @rdname sample.names

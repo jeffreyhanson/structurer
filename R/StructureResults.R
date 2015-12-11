@@ -74,8 +74,12 @@ sample.names.StructureResults <- function(x) {
 #' @rdname sample.membership
 #' @method sample.membership StructureResults
 #' @export
-sample.membership.StructureResults <- function(x) {
-	return(x@summary)
+sample.membership.StructureResults <- function(x, threshold=NULL) {
+	if (is.null(threshold))
+		return(x@summary)
+	pops <- apply(x@summary, 1, which.max)
+	pops[which(apply(x@summary, 1, function(i) {all(i < threshold)}))] <- NA
+	return(pops)
 }
 
 #' @rdname loglik

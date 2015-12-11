@@ -8,18 +8,20 @@
 \alias{sample.membership.StructureResults}
 \title{Sample membership}
 \usage{
-sample.membership(x)
+sample.membership(x, threshold)
 
 \method{sample.membership}{StructureReplicate}(x)
 
-\method{sample.membership}{StructureResults}(x)
+\method{sample.membership}{StructureResults}(x, threshold = NULL)
 
-\method{sample.membership}{StructureAnalysis}(x)
+\method{sample.membership}{StructureAnalysis}(x, threshold = NULL)
 
-\method{sample.membership}{StructureCollection}(x)
+\method{sample.membership}{StructureCollection}(x, threshold = NULL)
 }
 \arguments{
 \item{x}{\code{StructureReplicate}, \code{StructureResults}, \code{StructureAnalysis}.}
+
+\item{threshold}{\code{numeric} threshold to assign samples to populations. If \code{NULL} then probabilities for each population are returned. Defaults to \code{NULL}.}
 }
 \value{
 \code{integer}.

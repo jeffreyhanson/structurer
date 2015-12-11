@@ -8,6 +8,7 @@ test_that('run.Structure', {
 	n.samples(sc)
 	n.pop(sc)
 	sample.membership(sc)
+	sample.membership(sc, 0.75)
 	summary(sc)
 	loglik.plot(sc)
 	delta.plot(sc)

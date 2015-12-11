@@ -33,9 +33,10 @@ n.samples <- function(x) UseMethod('n.samples')
 #' This function returns the membership of samples in a \code{Structure} object.
 #' 
 #' @param x \code{StructureReplicate}, \code{StructureResults}, \code{StructureAnalysis}.
+#' @param threshold \code{numeric} threshold to assign samples to populations. If \code{NULL} then probabilities for each population are returned. Defaults to \code{NULL}.
 #' @return \code{integer}.
 #' @export
-sample.membership <- function(x) UseMethod('sample.membership')
+sample.membership <- function(x, threshold) UseMethod('sample.membership')
 
 #' Number of populations
 #'

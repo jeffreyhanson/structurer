@@ -109,8 +109,8 @@ loci.names.StructureAnalysis <- function(x) {
 #' @rdname sample.membership
 #' @method sample.membership StructureAnalysis
 #' @export
-sample.membership.StructureAnalysis <- function(x) {
-	return(x@results@summary)
+sample.membership.StructureAnalysis <- function(x, threshold=NULL) {
+	return(sample.membership(x@results, threshold))
 }
 
 

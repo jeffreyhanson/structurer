@@ -28,6 +28,5 @@ vignette('structurer', package='structurer')
 
 **If this R package helped you, please cite it.**
 
-Hanson J.O., Rhodes J. R., Fuller R. A. (2015). structurer: Structure Analysis in R. Version 1.0.0. doi: 10.5281/zenodo.XXX.
+Hanson J.O., Rhodes J. R., Fuller R. A. (2015). structurer: Structure Analysis in R. Version 1.0.0. doi: 10.5281/zenodo.35188.
 
-	

@@ -228,9 +228,9 @@ LOCPRIOR MODEL FOR USING LOCATION INFORMATION
 
 OUTPUT OPTIONS
 
-#define PRINTNET     1 // (B) Print the "net nucleotide distance" to screen during the run
-#define PRINTLAMBDA  1 // (B) Print current value(s) of lambda to screen
-#define PRINTQSUM    1 // (B) Print summary of current population membership to screen
+#define PRINTNET     0 // (B) Print the "net nucleotide distance" to screen during the run
+#define PRINTLAMBDA  0 // (B) Print current value(s) of lambda to screen
+#define PRINTQSUM    0 // (B) Print summary of current population membership to screen
 
 #define SITEBYSITE   0  // (B) whether or not to print site by site results. (Linkage model only) This is a large file!
 #define PRINTQHAT    0  // (B) Q-hat printed to a separate file.  Turn this on before using STRAT.
@@ -238,7 +238,7 @@ OUTPUT OPTIONS
 #define PRINTLIKES   0  // (B) print current likelihood to screen every rep
 #define INTERMEDSAVE 0  // (int) number of saves to file during run
 
-#define ECHODATA     1  // (B) Print some of data file to screen to check that the data entry is correct. (NEXT 3 ARE FOR COLLECTING DISTRIBUTION OF Q:)
+#define ECHODATA     0  // (B) Print some of data file to screen to check that the data entry is correct. (NEXT 3 ARE FOR COLLECTING DISTRIBUTION OF Q:)
 #define ANCESTDIST   0  // (B) collect data about the distribution of ancestry coefficients (Q) for each individual
 #define NUMBOXES   1000 // (int) the distribution of Q values is stored as a histogram with this number of boxes. 
 #define ANCESTPINT 0.90 // (d) the size of the displayed probability interval on Q (values between 0.0--1.0)

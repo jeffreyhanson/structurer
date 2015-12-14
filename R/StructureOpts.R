@@ -126,8 +126,8 @@ FILE extraparams.
 Basic Program Parameters
 
 #define MAXPOPS    2      // (int) number of populations assumed
-#define BURNIN    ',x@BURNIN,'   // (int) length of burnin period
-#define NUMREPS   ',x@NUMREPS,'   // (int) number of MCMC reps after burnin
+#define BURNIN    ',sprintf('%i',x@BURNIN),'   // (int) length of burnin period
+#define NUMREPS   ',sprintf('%i',x@NUMREPS),'   // (int) number of MCMC reps after burnin
 
 Input/Output files
 
@@ -250,7 +250,7 @@ MISCELLANEOUS
 #define ALPHAPROPSD 0.025 // (d) SD of proposal for updating alpha
 #define STARTATPOPINFO 0  // Use given populations as the initial condition for population origins.  (Need POPDATA==1).  It is assumed that the PopData in the input file are between 1 and k where k<=MAXPOPS.
 #define RANDOMIZE      ',is.na(x@SEED),'  // (B) use new random seed for each run 
-#define SEED        ',ifelse(is.na(x@SEED),1, x@SEEDa),'  // (int) seed value for random number generator (must set RANDOMIZE=0) 
+#define SEED        ',ifelse(is.na(x@SEED),1, x@SEED),'  // (int) seed value for random number generator (must set RANDOMIZE=0) 
 #define METROFREQ    10   // (int) Frequency of using Metropolis step to update Q under admixture model (ie use the metr. move every i steps).  If this is set to 0, it is never used. (Proposal for each q^(i) sampled from prior.  The goal is to improve mixing for small alpha.)
 #define REPORTHITRATE 0 //   (B) report hit rate if using METROFREQ
 

@@ -154,7 +154,7 @@ run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20
 				replicates=lapply(
 					seq_len(opts@NUMRUNS),
 					function(i) {
-						system(paste0(structure.path, ' ', ' -m ',file.path(dir, 'mainparams.txt'),' -e ',file.path(dir, 'extraparams.txt'),' -K ',2,' -L ',n.loci(x),' -N ',n.samples(x),' -i ',file.path(dir, 'data.txt'),' -o ',file.path(dir, 'output.txt')))	
+						system(paste0(structure.path, ' ', '-m ',file.path(dir, 'mainparams.txt'),' -e ',file.path(dir, 'extraparams.txt'),' -K ',2,' -L ',n.loci(x),' -N ',n.samples(x),' -i ',file.path(dir, 'data.txt'),' -o ',file.path(dir, 'output.txt')))
 						return(read.StructureReplicate(file.path(dir, 'output.txt_f')))
 					}
 				)

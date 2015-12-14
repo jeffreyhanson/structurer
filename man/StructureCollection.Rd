@@ -4,14 +4,10 @@
 \alias{StructureCollection}
 \title{Create StructureCollection object}
 \usage{
-StructureCollection(analyses, summary = NULL, best = NULL)
+StructureCollection(analyses)
 }
 \arguments{
-\item{analyses}{\code{list} of \code{StructureCollection} objects run using different .}
-
-\item{summary}{\code{data.frame}  summary of analyses.}
-
-\item{best}{\code{numeric} index of \code{StructureCollection} with best negative log-likelihood.}
+\item{summary.data}{\code{data.frame}  summary of analyses.}
 }
 \description{
 This function creates a new \code{StructureCollection} object.

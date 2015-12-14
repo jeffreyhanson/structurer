@@ -19,7 +19,6 @@ setClass(
 	),
 	validity=function(object) {
 		# analysis
-		o1 <<- object
 		sapply(object@analyses, function(x) {
 			expect_is(x, 'StructureAnalysis')
 		})
@@ -39,38 +38,35 @@ setClass(
 #'
 #' This function creates a new \code{StructureCollection} object.
 #'
-#' @param summary \code{data.frame}  summary of analyses.
-#' @param analyses \code{list} of \code{StructureCollection} objects run using different .
-#' @param best \code{numeric} index of \code{StructureCollection} with best negative log-likelihood.
+#' @param summary.data \code{data.frame}  summary of analyses.
 #' @seealso \code{\link{StructureCollection-class}}, \code{\link{StructureData}}, \code{\link{StructureData}}, \code{\link{StructureResults}}.
 #' @details The delta-k values are calculated using the method used by Structure Harvestor \url{http://taylor0.biology.ucla.edu/structureHarvester/faq.html.}
 #' @export
-StructureCollection<-function(analyses, summary=NULL, best=NULL) {
-	if (is.null(summary)) {
-		## k is calued using method used in structureHarvestor, see 
-		# extract ll
-		ll <- sapply(analyses, function(x) {sapply(x@results@replicates, loglik.StructureReplicate)})
-		ll.mean <- colMeans(ll)
-		ll.sd <- apply(ll, 2, sd)
-		# delta k calculations
-		prevK <- ll.mean[1:(length(ll.mean)-2)]
-		nextK <- ll.mean[3:(length(ll.mean))]
-		thisK <- ll.mean[2:(length(ll.mean)-1)]
-		thisKsd <- ll.sd[2:(length(ll.mean)-1)]
-		delta.k <- abs(nextK - (2*thisK ) + prevK) / thisKsd
-		# generate data.frame
-		summary <- data.frame(
-			k=sapply(analyses, function(x) {x@opts@MAXPOPS}),
-			mean.loglik=ll.mean,
-			sd.loglik=ll.sd,
-			delta.k=c(NA, delta.k,NA),
-			n.replicates=sapply(analyses, function(x) {length(x@results@replicates)})
-		)
-	}
-	if (is.null(best)) {
-		best <- which.max(summary$delta.k)
-	}
-	x<-new("StructureCollection", summary=summary, best=best, analyses=analyses)
+StructureCollection<-function(analyses) {
+	# calculate summary
+	## k is calued using method used in structureHarvestor, see 
+	# extract ll
+	ll <- sapply(analyses, function(x) {sapply(x@results@replicates, loglik.StructureReplicate)})
+	ll.mean <- colMeans(ll)
+	ll.sd <- apply(ll, 2, sd)
+	# delta k calculations
+	prevK <- ll.mean[1:(length(ll.mean)-2)]
+	nextK <- ll.mean[3:(length(ll.mean))]
+	thisK <- ll.mean[2:(length(ll.mean)-1)]
+	thisKsd <- ll.sd[2:(length(ll.mean)-1)]
+	delta.k <- abs(nextK - (2*thisK ) + prevK) / thisKsd
+	# generate data.frame
+	summary.data <- data.frame(
+		k=sapply(analyses, function(x) {x@opts@MAXPOPS}),
+		mean.loglik=ll.mean,
+		sd.loglik=ll.sd,
+		delta.k=c(NA, delta.k,NA),
+		n.replicates=sapply(analyses, function(x) {length(x@results@replicates)})
+	)
+	# determine best
+	best <- which.max(summary.data$delta.k)
+	# create object
+	x<-new("StructureCollection", summary=summary.data, best=best, analyses=analyses)
 	validObject(x, test=FALSE)
 	return(x)
 }
@@ -96,9 +92,7 @@ run.Structure<-function(x, NUMRUNS=2, MAXPOPS=1:10, BURNIN=10000, NUMREPS=20000,
 		StructureCollection(
 			analyses=lapply(MAXPOPS, function(n) {
 				run.single.Structure(x, NUMRUNS=NUMRUNS, MAXPOPS=n, BURNIN=BURNIN, NUMREPS=NUMREPS, NOADMIX=NOADMIX, ADMBURNIN=ADMBURNIN, SEED=SEED)
-			}),
-			best=NULL,
-			summary=NULL
+			})
 		)
 	)
 }

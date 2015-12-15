@@ -120,6 +120,7 @@ sample.membership.StructureAnalysis <- function(x, threshold=NULL) {
 #'
 #' @param x \code{StructureData} object.
 #' @inheritParams StructureOpts
+#' @inheritParams ClumppOpts
 #' @param dir \code{character} with directory to use for analysis.
 #' @param clean \code{logical} should input and output files be deleted after analysis is finished?
 #' @seealso \code{StructureData}, \code{StructureOpts}.
@@ -127,12 +128,15 @@ sample.membership.StructureAnalysis <- function(x, threshold=NULL) {
 #' # run Structure using low number of iterations
 #' dat <- read.StructureData(system.file('extdata', 'example_fstat_aflp.dat', package='structurer'))
 #' x <- run.single.Structure(dat, NUMRUNS=1, MAXPOPS=2, BURNIN=10,
-#'	NUMREPS=10, NOADMIX=FALSE, ADMBURNIN=10)
+#'	NUMREPS=10, NOADMIX=FALSE, ADMBURNIN=10, )
 #' @export
-run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, SEED=NA_real_, dir=tempdir(), clean=TRUE) {
+run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, SEED=NA_real_,
+	M='Greedy', W=TRUE, S=FALSE, REPEATS=1000, dir=tempdir(), clean=TRUE)
+{
 	## initialization
 	# argument checks
 	opts <- StructureOpts(NUMRUNS=NUMRUNS, MAXPOPS=MAXPOPS, BURNIN=BURNIN, NUMREPS=NUMREPS, NOADMIX=NOADMIX, ADMBURNIN=ADMBURNIN, SEED=SEED)
+	opts2 <- ClumppOpts(M='Greedy', W=TRUE, S=FALSE, REPEATS=1000)
 	expect_is(x, 'StructureData')
 	# identify structure path
 	structure.path <- switch(
@@ -148,8 +152,7 @@ run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20
 	write.StructureOpts(opts,dir)
 	write.StructureData(x,file.path(dir, 'data.txt'))
 	# run BayeScan
-	return(
-		StructureAnalysis(
+	ret <- StructureAnalysis(
 			results=StructureResults(
 				replicates=lapply(
 					seq_len(opts@NUMRUNS),
@@ -157,12 +160,16 @@ run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20
 						system(paste0(structure.path, ' ', '-m ',file.path(dir, 'mainparams.txt'),' -e ',file.path(dir, 'extraparams.txt'),' -K ',2,' -L ',n.loci(x),' -N ',n.samples(x),' -i ',file.path(dir, 'data.txt'),' -o ',file.path(dir, 'output.txt')))
 						return(read.StructureReplicate(file.path(dir, 'output.txt_f')))
 					}
-				)
+				),
+				opts2
 			),
 			data=x,
 			opts=opts
 		)
-	)
+	# if clean then delete files
+	if (clean) unlink(dir)
+	# return results
+	return(ret)
 }
 
 #' @method print StructureAnalysis

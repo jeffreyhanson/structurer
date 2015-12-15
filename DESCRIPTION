@@ -26,16 +26,20 @@ Suggests:
     rmarkdown
 BinaryFiles: 'structure_linux',
     'structure_mac',
-    'structure_win.exe'
+    'structure_win.exe',
+    'CLUMPP_linux',
+    'CLUMPP_mac',
+    'CLUMPP_win.exe'
 Collate:
+    'dependencies.R'
     'structurer-internal.R'
     'misc.R'
     'generics.R'
+    'ClumppOpts.R'
     'StructureReplicate.R'
     'StructureResults.R'
     'StructureData.R'
     'StructureOpts.R'
     'StructureAnalysis.R'
     'StructureCollection.R'
-    'dependencies.R'
 RoxygenNote: 5.0.1

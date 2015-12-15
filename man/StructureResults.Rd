@@ -4,11 +4,9 @@
 \alias{StructureResults}
 \title{Create StructureResults object}
 \usage{
-StructureResults(summary = NULL, replicates)
+StructureResults(replicates, opts = ClumpOpts(), dir = tempdir())
 }
 \arguments{
-\item{summary}{\code{data.frame} object containing overall results from Structure replicates.}
-
 \item{replicates}{\code{list} of \code{StructureReplicate} objects.}
 }
 \value{

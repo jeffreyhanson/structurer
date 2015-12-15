@@ -27,25 +27,33 @@ setClass(
 #'
 #' This function creates a new \code{StructureResults} object.
 #'
-#' @param summary \code{data.frame} object containing overall results from Structure replicates.
 #' @param replicates \code{list} of \code{StructureReplicate} objects.
 #' @seealso \code{\link{StructureReplicate-class}}.
 #' @return \code{\link{StructureReplicate}}.
 #' @export
-StructureResults<-function(summary=NULL, replicates) {
-	# compute summary results
-	if (is.null(summary)) {
-		if (length(replicates)>1) {
-			dat <- lapply(replicates, slot, name='matrix')
-			summary <- sapply(seq_len(ncol(dat[[1]])), function(i) {
-				rowMeans(sapply(dat, function(x) {x[,i]}))
-			})
-		} else {
-			summary <- replicates[[1]]@matrix
-		}
+StructureResults<-function(replicates, opts=ClumpOpts(), dir=tempdir()) {
+	### clumpp analysis to combine replicates
+	# sink replicates to file
+	if (length(replicates)>1) {
+		# init
+		clumpp.path <- switch(
+			Sys.info()['sysname'],
+			'Linux'=system.file('bin', 'CLUMPP_linux', package='structurer'),
+			'Darwin'=system.file('bin', 'CLUMPP_mac', package='structurer'),
+			'Windows'=system.file('bin', 'CLUMPP_win.exe', package='structurer')
+		)
+		# sink replicates to file
+		write.ClumppOpts(opts, file.path(dir, 'paramfile'))
+		write.ClumppReplicates(replicates, file.path(dir,'popfile.txt'))
+		# run clumpp
+		system(paste0(clumpp.path,' ',file.path(dir, 'paramfile'),' -p ',file.path(dir, 'popfile.txt'),' -o ',file.path(dir, 'outfile.txt'),' -k ',n.pop(replicates[[1]]),' -c ',n.samples(replicates[[1]]),' -r ',length(replicates),' -j ',file.path(dir, 'miscfile.txt')))
+		# load in replicatess
+		summary.dat <- read.ClumppReplicates(file.path(dir,'outfile.txt'))
+	} else {
+		summary.dat <- replicates[[1]]@matrix
 	}
-	# return new object
-	x<-new("StructureResults", summary=summary, replicates=replicates)
+	### return new object
+	x<-new("StructureResults", summary=summary.dat, replicates=replicates)
 	validObject(x, test=FALSE)
 	return(x)
 }
@@ -109,6 +117,4 @@ setMethod(
 )
 
  
- 
-
  

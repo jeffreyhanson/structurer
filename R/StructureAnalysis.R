@@ -136,7 +136,7 @@ run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20
 	## initialization
 	# argument checks
 	opts <- StructureOpts(NUMRUNS=NUMRUNS, MAXPOPS=MAXPOPS, BURNIN=BURNIN, NUMREPS=NUMREPS, NOADMIX=NOADMIX, ADMBURNIN=ADMBURNIN, SEED=SEED)
-	opts2 <- ClumppOpts(M='Greedy', W=TRUE, S=FALSE, REPEATS=1000)
+	opts2 <- ClumppOpts(M=M, W=W, S=S, REPEATS=REPEATS)
 	expect_is(x, 'StructureData')
 	# identify structure path
 	structure.path <- switch(

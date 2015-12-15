@@ -77,6 +77,7 @@ StructureCollection<-function(analyses) {
 #'
 #' @param x \code{StructureData} object.
 #' @inheritParams StructureOpts
+#' @inheritParams ClumppOpts
 #' @param dir \code{character} with directory to use for analysis.
 #' @param clean \code{logical} should input and output files be deleted after analysis is finished?
 #' @seealso \code{StructureData}, \code{StructureOpts}.
@@ -86,12 +87,15 @@ StructureCollection<-function(analyses) {
 #' x <- run.Structure(dat, NUMRUNS=2, MAXPOPS=1:3, BURNIN=10, NUMREPS=10, NOADMIX=FALSE, ADMBURNIN=10)
 #' print(x)
 #' @export
-run.Structure<-function(x, NUMRUNS=2, MAXPOPS=1:10, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, SEED=NA_real_, dir=tempdir(), clean=TRUE) {
+run.Structure<-function(x, NUMRUNS=2, MAXPOPS=1:10, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, SEED=NA_real_,
+	M='Greedy', W=TRUE, S=FALSE, REPEATS=1000, dir=tempdir(), clean=TRUE)
+{
 	# run analysis
 	return(
 		StructureCollection(
 			analyses=lapply(MAXPOPS, function(n) {
-				run.single.Structure(x, NUMRUNS=NUMRUNS, MAXPOPS=n, BURNIN=BURNIN, NUMREPS=NUMREPS, NOADMIX=NOADMIX, ADMBURNIN=ADMBURNIN, SEED=SEED)
+				run.single.Structure(x, NUMRUNS=NUMRUNS, MAXPOPS=n, BURNIN=BURNIN, NUMREPS=NUMREPS, NOADMIX=NOADMIX, ADMBURNIN=ADMBURNIN, SEED=SEED,
+					M=M, W=W, S=S, REPEATS=REPEATS, dir=dir, clean=clean)
 			})
 		)
 	)

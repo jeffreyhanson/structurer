@@ -30,7 +30,7 @@ run.single.Structure(x, NUMRUNS = 2, MAXPOPS = 2, BURNIN = 10000,
 
 \item{W}{\code{logical} weight populations by number of individuals? Defaults to \code{TRUE}.}
 
-\item{S}{\code{logical} if \code{TRUE} the \code{G} matrix similarity statistic ised used. Else the \code{G'} statistic is used. Defaults to code{FALSE}.}
+\item{S}{\code{logical} if \code{TRUE} the \eqn{G} matrix similarity statistic ised used. Else the \eqn{G \prime} statistic is used. Defaults to code{FALSE}.}
 
 \item{REPEATS}{\code{numeric} Number of random input orders tested. Defaults to 1000.}
 

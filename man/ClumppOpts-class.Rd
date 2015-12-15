@@ -14,7 +14,7 @@ This class stores input parameters for the Structure program.
 
 \item{\code{W}}{\code{logical} weight populations by number of individuals? Defaults to \code{TRUE}.}
 
-\item{\code{S}}{\code{logical} if \code{TRUE} the \code{G} matrix similarity statistic ised used. Else the \code{G\\'} statistic is used. Defaults to code{FALSE}.}
+\item{\code{S}}{\code{logical} if \code{TRUE} the \eqn{G} matrix similarity statistic ised used. Else the \eqn{G \prime} statistic is used. Defaults to \code{FALSE}.}
 
 \item{\code{REPEATS}}{\code{numeric} Number of random input orders tested. Defaults to 1000.}
 }}

@@ -7,7 +7,7 @@ NULL
 #'
 #' @slot M \code{character} name of search method. Valid arguments are 'FullSearch', 'Greedy', or 'LargeKGreedy'. Defaults to 'Greedy'.
 #' @slot W \code{logical} weight populations by number of individuals? Defaults to \code{TRUE}. 
-#' @slot S \code{logical} if \code{TRUE} the \code{G} matrix similarity statistic ised used. Else the \code{G\\'} statistic is used. Defaults to code{FALSE}.
+#' @slot S \code{logical} if \code{TRUE} the \eqn{G} matrix similarity statistic ised used. Else the \eqn{G \prime} statistic is used. Defaults to \code{FALSE}.
 #' @slot REPEATS \code{numeric} Number of random input orders tested. Defaults to 1000.
 #' @seealso \code{\link{ClumppOpts}}.
 #' @export
@@ -47,7 +47,7 @@ setClass(
 #'
 #' @param M \code{character} name of search method. Valid arguments are 'FullSearch', 'Greedy', or 'LargeKGreedy'. Defaults to 'Greedy'.
 #' @param W \code{logical} weight populations by number of individuals? Defaults to \code{TRUE}. 
-#' @param S \code{logical} if \code{TRUE} the \code{G} matrix similarity statistic ised used. Else the \code{G'} statistic is used. Defaults to code{FALSE}.
+#' @param S \code{logical} if \code{TRUE} the \eqn{G} matrix similarity statistic ised used. Else the \eqn{G \prime} statistic is used. Defaults to code{FALSE}.
 #' @param REPEATS \code{numeric} Number of random input orders tested. Defaults to 1000.
 #' @seealso \code{\link{ClumppOpts-class}}.
 #' @examples 

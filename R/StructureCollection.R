@@ -201,7 +201,7 @@ loglik.plot.StructureCollection <- function(x, main='') {
 	dat <- x@summary
 	dat$lower <- dat$mean.loglik - dat$sd.loglik
 	dat$upper <- dat$mean.loglik + dat$sd.loglik
-	ggplot(data=x@summary) +
+	ggplot(data=dat) +
 		geom_point(aes_string(y='mean.loglik', x='k')) +
 		geom_errorbar(aes_string(ymin='lower', ymax='upper')) +
 		theme_classic() +

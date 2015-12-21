@@ -139,12 +139,7 @@ run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20
 	opts2 <- ClumppOpts(M=M, W=W, S=S, REPEATS=REPEATS)
 	expect_is(x, 'StructureData')
 	# identify structure path
-	structure.path <- switch(
-		Sys.info()['sysname'],
-		'Linux'=system.file('bin', 'structure_linux', package='structurer'),
-		'Darwin'=system.file('bin', 'structure_mac', package='structurer'),
-		'Windows'=system.file('bin', 'structure_win.exe', package='structurer')
-	)
+	structure.path <- system.file('bin', 'structure', package='structurer')
 	# update permissions
 	if (!grepl(basename(structure.path), 'win'))
 		system(paste0('chmod 700 ',structure.path))

@@ -1,15 +1,15 @@
 #### Parameters
 optimization = -O3
 
-
 all: structure
+	cp structure ../inst/bin/structure
 
 clean:
 	rm *.o structure
 
 ##### structure makefile
 structure: structure.o params.o datain.o output.o ran.o mymath.o
-	gcc -o structure structure.o params.o datain.o output.o ran.o mymath.o $(optimization) -lm 
+	gcc -o structure structure.o params.o datain.o output.o ran.o mymath.o $(optimization) -lm
 
 STRAT: STRAT.o params.o datain.o ran.o mymath.o
 	gcc -o STRAT STRAT.o params.o datain.o ran.o mymath.o  -lm $(optimization) 

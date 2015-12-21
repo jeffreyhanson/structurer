@@ -31,7 +31,7 @@ setClass(
 		BURNIN=10000,
 		NUMREPS=20000,
 		NOADMIX=FALSE,
-		ADMBURNIN=500,
+		ADMBURNIN=5000,
 		SEED=NA_real_
 	),
 	validity=function(object) {
@@ -181,7 +181,7 @@ SPECIFIED IN mainparams.
 PROGRAM OPTIONS
 
 #define NOADMIX     ',as.numeric(x@NOADMIX),' // (B) Use no admixture model (0=admixture model, 1=no-admix)
-#define LINKAGE     0 // (B) Use the linkage model model 
+#define LINKAGE     0 // (B) Use the linkage model
 #define USEPOPINFO  0 // (B) Use prior population information to pre-assign individuals to clusters
 #define LOCPRIOR    0 //(B)  Use location information to improve weak data
 
@@ -190,8 +190,7 @@ PROGRAM OPTIONS
 
 #define INFERALPHA  1 // (B) Infer ALPHA (the admixture parameter)
 #define POPALPHAS   0 // (B) Individual alpha for each population
-#define ALPHA     1.0 // (d) Dirichlet parameter for degree of admixture 
-                             (this is the initial value if INFERALPHA==1).
+#define ALPHA     1.0 // (d) Dirichlet parameter for degree of admixture (this is the initial value if INFERALPHA==1).
 
 #define INFERLAMBDA 0 // (B) Infer LAMBDA (the allele frequencies parameter)
 #define POPSPECIFICLAMBDA 0 //(B) infer a separate lambda for each pop (only if INFERLAMBDA=1).
@@ -199,26 +198,26 @@ PROGRAM OPTIONS
 
 PRIORS
 
-#define FPRIORMEAN 0.01 // (d) Prior mean and SD of Fst for pops.
-#define FPRIORSD   0.05  // (d) The prior is a Gamma distribution with these parameters
+//#define FPRIORMEAN 0.01 // (d) Prior mean and SD of Fst for pops.
+// #define FPRIORSD   0.05  // (d) The prior is a Gamma distribution with these parameters
 
-#define UNIFPRIORALPHA 1 // (B) use a uniform prior for alpha; otherwise gamma prior
-#define ALPHAMAX     10.0 // (d) max value of alpha if uniform prior
-#define ALPHAPRIORA   1.0 // (only if UNIFPRIORALPHA==0): alpha has a gamma prior with mean A*B, and 
-#define ALPHAPRIORB   2.0 // variance A*B^2.  
+// #define UNIFPRIORALPHA 1 // (B) use a uniform prior for alpha; otherwise gamma prior
+// #define ALPHAMAX     10.0 // (d) max value of alpha if uniform prior
+// #define ALPHAPRIORA   1.0 // (only if UNIFPRIORALPHA==0): alpha has a gamma prior with mean A*B, and 
+// #define ALPHAPRIORB   2.0 // variance A*B^2.  
 
 
-#define LOG10RMIN     -4.0   //(d) Log10 of minimum allowed value of r under linkage model
-#define LOG10RMAX      1.0   //(d) Log10 of maximum allowed value of r
-#define LOG10RPROPSD   0.1   //(d) standard deviation of log r in update
-#define LOG10RSTART   -2.0   //(d) initial value of log10 r
+// #define LOG10RMIN     -4.0   //(d) Log10 of minimum allowed value of r under linkage model
+// #define LOG10RMAX      1.0   //(d) Log10 of maximum allowed value of r
+// #define LOG10RPROPSD   0.1   //(d) standard deviation of log r in update
+// #define LOG10RSTART   -2.0   //(d) initial value of log10 r
 
                          
 USING PRIOR POPULATION INFO (USEPOPINFO)
 
-#define GENSBACK    2  //(int) For use when inferring whether an individual is an immigrant, or has an immigrant ancestor in the past GENSBACK generations.  eg, if GENSBACK==2, it tests for immigrant ancestry back to grandparents. 
-#define MIGRPRIOR 0.01 //(d) prior prob that an individual is a migrant (used only when USEPOPINFO==1).  This should be small, eg 0.01 or 0.1.
-#define PFROMPOPFLAGONLY 0 // (B) only use individuals with POPFLAG=1 to update P. This is to enable use of a reference set of individuals for clustering additional "test" individuals.
+// #define GENSBACK    2  //(int) For use when inferring whether an individual is an immigrant, or has an immigrant ancestor in the past GENSBACK generations.  eg, if GENSBACK==2, it tests for immigrant ancestry back to grandparents. 
+// #define MIGRPRIOR 0.01 //(d) prior prob that an individual is a migrant (used only when USEPOPINFO==1).  This should be small, eg 0.01 or 0.1.
+// #define PFROMPOPFLAGONLY 0 // (B) only use individuals with POPFLAG=1 to update P. This is to enable use of a reference set of individuals for clustering additional "test" individuals.
 
 LOCPRIOR MODEL FOR USING LOCATION INFORMATION
 
@@ -246,7 +245,7 @@ OUTPUT OPTIONS
 MISCELLANEOUS
 
 #define COMPUTEPROB 1     // (B) Estimate the probability of the Data under the model.  This is used when choosing the best number of subpopulations.
-#define ADMBURNIN  500    // (int) [only relevant for linkage model]: Initial period of burnin with admixture model (see Readme)
+#define ADMBURNIN  ',x@ADMBURNIN,'    // (int) [only relevant for linkage model]: Initial period of burnin with admixture model (see Readme)
 #define ALPHAPROPSD 0.025 // (d) SD of proposal for updating alpha
 #define STARTATPOPINFO 0  // Use given populations as the initial condition for population origins.  (Need POPDATA==1).  It is assumed that the PopData in the input file are between 1 and k where k<=MAXPOPS.
 #define RANDOMIZE      ',is.na(x@SEED),'  // (B) use new random seed for each run 

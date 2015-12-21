@@ -46,8 +46,11 @@ StructureResults<-function(replicates, opts=ClumpOpts(), dir=tempdir()) {
 		write.ClumppOpts(opts, file.path(dir, 'paramfile'))
 		write.ClumppReplicates(replicates, file.path(dir,'popfile.txt'))
 		# run clumpp
-		system(paste0(clumpp.path,' ',file.path(dir, 'paramfile'),' -p ',file.path(dir, 'popfile.txt'),' -o ',file.path(dir, 'outfile.txt'),' -k ',n.pop(replicates[[1]]),' -c ',n.samples(replicates[[1]]),' -r ',length(replicates),' -j ',file.path(dir, 'miscfile.txt')))
-		# load in replicatess
+		o<-system(paste0(clumpp.path,' ',file.path(dir, 'paramfile'),' -p ',file.path(dir, 'popfile.txt'),' -o ',file.path(dir, 'outfile.txt'),' -k ',n.pop(replicates[[1]]),' -c ',n.samples(replicates[[1]]),' -r ',length(replicates),' -j ',file.path(dir, 'miscfile.txt')), intern=TRUE)
+		# delete extra files
+		if (file.exists('perm_data.txt')) unlink('perm_data.txt')
+		if (file.exists(file.path(dir,'perm_data.txt'))) unlink(file.path(dir,'perm_data.txt'))
+		# load in replicates
 		summary.dat <- read.ClumppReplicates(file.path(dir,'outfile.txt'))
 	} else {
 		summary.dat <- replicates[[1]]@matrix

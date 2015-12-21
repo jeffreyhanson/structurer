@@ -159,6 +159,9 @@ run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20
 					function(i) {
 						cat('starting replicate ',i,'\n')
 						o<-system(paste0(structure.path, ' ', '-m ',file.path(dir, 'mainparams.txt'),' -e ',file.path(dir, 'extraparams.txt'),' -K ',2,' -L ',n.loci(x),' -N ',n.samples(x),' -i ',file.path(dir, 'data.txt'),' -o ',file.path(dir, 'output.txt')), intern=TRUE)
+						# delete extra files created by structure
+						if (file.exists('seed.txt')) unlink('seed.txt')
+						if (file.exists(file.path(dir,'seed.txt'))) unlink(file.path(dir,'seed.txt'))
 						return(read.StructureReplicate(file.path(dir, 'output.txt_f')))
 					}
 				),

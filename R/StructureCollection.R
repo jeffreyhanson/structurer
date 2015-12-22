@@ -80,6 +80,7 @@ StructureCollection<-function(analyses) {
 #' @inheritParams ClumppOpts
 #' @param dir \code{character} with directory to use for analysis.
 #' @param clean \code{logical} should input and output files be deleted after analysis is finished?
+#' @param verbose \code{logical} should messages be printed during processing?
 #' @seealso \code{StructureData}, \code{StructureOpts}.
 #' @examples
 #' # run Structure using low number of iterations
@@ -88,14 +89,16 @@ StructureCollection<-function(analyses) {
 #' print(x)
 #' @export
 run.Structure<-function(x, NUMRUNS=2, MAXPOPS=1:10, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, SEED=NA_real_,
-	M='Greedy', W=TRUE, S=FALSE, REPEATS=1000, dir=tempdir(), clean=TRUE)
+	M='Greedy', W=TRUE, S=FALSE, REPEATS=1000, dir=tempdir(), clean=TRUE, verbose=FALSE)
 {
+	test_that('argument to MAXPOPS have at least 3 elements', expect_true(length(MAXPOPS) >= 3))
 	# run analysis
 	return(
 		StructureCollection(
 			analyses=lapply(MAXPOPS, function(n) {
+				if (verbose) cat('starting MAXPOPS: ',n,'\n')
 				run.single.Structure(x, NUMRUNS=NUMRUNS, MAXPOPS=n, BURNIN=BURNIN, NUMREPS=NUMREPS, NOADMIX=NOADMIX, ADMBURNIN=ADMBURNIN, SEED=SEED,
-					M=M, W=W, S=S, REPEATS=REPEATS, dir=dir, clean=clean)
+					M=M, W=W, S=S, REPEATS=REPEATS, dir=dir, clean=clean, verbose=verbose)
 			})
 		)
 	)
@@ -197,13 +200,16 @@ setMethod(
 #' @method loglik.plot StructureCollection
 #' @export
 loglik.plot.StructureCollection <- function(x, main='') {
-	## make plot
-	dat <- x@summary
-	dat$lower <- dat$mean.loglik - dat$sd.loglik
-	dat$upper <- dat$mean.loglik + dat$sd.loglik
-	ggplot(data=dat) +
-		geom_point(aes_string(y='mean.loglik', x='k')) +
-		geom_errorbar(aes_string(ymin='lower', ymax='upper')) +
+	# extract data
+	dat <- lapply(x@analyses, function(y) {
+		lapply(y@results@replicates, function(z) {
+			data.frame(k=ncol(z@matrix), loglik=z@loglik)
+		})
+	})
+	dat <- do.call(rbind, unlist(dat, recursive=FALSE))
+	# make plot
+	ggplot(aes_string(x='k', y='loglik'), data=dat) +
+		geom_violin() +
 		theme_classic() +
 		xlab('Number of populations (k)') +
 		ylab('Negative log-likelihood') +

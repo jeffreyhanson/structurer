@@ -25,7 +25,7 @@ setClass(
 	),
 	validity=function(object) {
 		# check slots are finite
-		sapply(c('loglik', 'var_loglik', 'alpha'),
+		sapply(c('loglik', 'var_loglik'),
 			function(x) {
 				expect_true(is.finite(slot(object, x)))
 			}
@@ -37,6 +37,12 @@ setClass(
 		expect_equal(ncol(object@matrix), n.pop)
 		expect_equal(nrow(object@matrix), n.inds)
 		expect_equal(nrow(object@matrix), length(object@sample.names))
+		# check alpha
+		if (n.pop > 1) {
+			expect_true(is.finite(slot(object, 'alpha')))
+		} else {
+			expect_true(is.na(slot(object, 'alpha')))
+		}
 		return(TRUE)
 	}
 )
@@ -109,11 +115,15 @@ read.StructureReplicate<-function(file) {
 	n.inds <- as.numeric(gsub('NUMINDS=', '', grep('NUMINDS', pars, fixed=TRUE, value=TRUE), fixed=TRUE))
 	start.line <- grep('Inferred ancestry of individuals', logfile, fixed=TRUE)+1
 	mat <- read.table(file, skip=start.line, nrows=n.inds)
+	# load alpha
+	alpha <-as.numeric(gsub('Mean value of alpha         = ', '', grep('Mean value of alpha', logfile, fixed=TRUE, value=TRUE), fixed=TRUE)) 
+	if (length(alpha)==0)
+		alpha <- NA_real_
 	# return object
 	StructureReplicate(
 		loglik=as.numeric(gsub('Mean value of ln likelihood = ', '', grep('Mean value of ln likelihood', logfile, fixed=TRUE, value=TRUE), fixed=TRUE)),
 		var_loglik=as.numeric(gsub('Variance of ln likelihood   = ', '', grep('Variance of ln likelihood', logfile, fixed=TRUE, value=TRUE), fixed=TRUE)),
-		alpha=as.numeric(gsub('Mean value of alpha         = ', '', grep('Mean value of alpha', logfile, fixed=TRUE, value=TRUE), fixed=TRUE)),
+		alpha=alpha,
 		matrix=as.matrix(mat[,c(-1, -2, -3, -4),drop=FALSE]),
 		sample.names=as.character(mat[[2]]),
 		log=logfile

@@ -7,7 +7,7 @@
 run.single.Structure(x, NUMRUNS = 2, MAXPOPS = 2, BURNIN = 10000,
   NUMREPS = 20000, NOADMIX = FALSE, ADMBURNIN = 500, SEED = NA_real_,
   M = "Greedy", W = TRUE, S = FALSE, REPEATS = 1000, dir = tempdir(),
-  clean = TRUE)
+  clean = TRUE, verbose = FALSE)
 }
 \arguments{
 \item{x}{\code{StructureData} object.}
@@ -37,6 +37,8 @@ run.single.Structure(x, NUMRUNS = 2, MAXPOPS = 2, BURNIN = 10000,
 \item{dir}{\code{character} with directory to use for analysis.}
 
 \item{clean}{\code{logical} should input and output files be deleted after analysis is finished?}
+
+\item{verbose}{\code{logical} should messages be printed during processing?}
 }
 \description{
 This function analyses data using Structure. It generates replicate runs for a single MAXPOPS parameter.
@@ -45,7 +47,7 @@ This function analyses data using Structure. It generates replicate runs for a s
 # run Structure using low number of iterations
 dat <- read.StructureData(system.file('extdata', 'example_fstat_aflp.dat', package='structurer'))
 x <- run.single.Structure(dat, NUMRUNS=1, MAXPOPS=2, BURNIN=10,
-NUMREPS=10, NOADMIX=FALSE, ADMBURNIN=10, )
+NUMREPS=10, NOADMIX=FALSE, ADMBURNIN=10)
 }
 \seealso{
 \code{StructureData}, \code{StructureOpts}.

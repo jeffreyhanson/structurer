@@ -121,17 +121,16 @@ sample.membership.StructureAnalysis <- function(x, threshold=NULL) {
 #' @param x \code{StructureData} object.
 #' @inheritParams StructureOpts
 #' @inheritParams ClumppOpts
-#' @param dir \code{character} with directory to use for analysis.
-#' @param clean \code{logical} should input and output files be deleted after analysis is finished?
+#' @inheritParams run.Structure
 #' @seealso \code{StructureData}, \code{StructureOpts}.
 #' @examples
 #' # run Structure using low number of iterations
 #' dat <- read.StructureData(system.file('extdata', 'example_fstat_aflp.dat', package='structurer'))
 #' x <- run.single.Structure(dat, NUMRUNS=1, MAXPOPS=2, BURNIN=10,
-#'	NUMREPS=10, NOADMIX=FALSE, ADMBURNIN=10, )
+#'	NUMREPS=10, NOADMIX=FALSE, ADMBURNIN=10)
 #' @export
 run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, SEED=NA_real_,
-	M='Greedy', W=TRUE, S=FALSE, REPEATS=1000, dir=tempdir(), clean=TRUE)
+	M='Greedy', W=TRUE, S=FALSE, REPEATS=1000, dir=tempdir(), clean=TRUE, verbose=FALSE)
 {
 	## initialization
 	# argument checks
@@ -152,8 +151,8 @@ run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20
 				replicates=lapply(
 					seq_len(opts@NUMRUNS),
 					function(i) {
-						cat('starting replicate ',i,'\n')
-						o<-system(paste0(structure.path, ' ', '-m ',file.path(dir, 'mainparams.txt'),' -e ',file.path(dir, 'extraparams.txt'),' -K ',2,' -L ',n.loci(x),' -N ',n.samples(x),' -i ',file.path(dir, 'data.txt'),' -o ',file.path(dir, 'output.txt')), intern=TRUE)
+						if (verbose) cat('\tstarting structure replicate ',i,'\n')
+						o<-system(paste0(structure.path, ' ', '-m ',file.path(dir, 'mainparams.txt'),' -e ',file.path(dir, 'extraparams.txt'),' -K ',MAXPOPS,' -L ',n.loci(x),' -N ',n.samples(x),' -i ',file.path(dir, 'data.txt'),' -o ',file.path(dir, 'output.txt')), intern=TRUE)
 						# delete extra files created by structure
 						if (file.exists('seed.txt')) unlink('seed.txt')
 						if (file.exists(file.path(dir,'seed.txt'))) unlink(file.path(dir,'seed.txt'))

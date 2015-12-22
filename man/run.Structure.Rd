@@ -6,7 +6,8 @@
 \usage{
 run.Structure(x, NUMRUNS = 2, MAXPOPS = 1:10, BURNIN = 10000,
   NUMREPS = 20000, NOADMIX = FALSE, ADMBURNIN = 500, SEED = NA_real_,
-  dir = tempdir(), clean = TRUE)
+  M = "Greedy", W = TRUE, S = FALSE, REPEATS = 1000, dir = tempdir(),
+  clean = TRUE, verbose = FALSE)
 }
 \arguments{
 \item{x}{\code{StructureData} object.}
@@ -25,9 +26,19 @@ run.Structure(x, NUMRUNS = 2, MAXPOPS = 1:10, BURNIN = 10000,
 
 \item{SEED}{\code{numeric} Seed for random number generator. Defaults to NA so a random seed is used.}
 
+\item{M}{\code{character} name of search method. Valid arguments are 'FullSearch', 'Greedy', or 'LargeKGreedy'. Defaults to 'Greedy'.}
+
+\item{W}{\code{logical} weight populations by number of individuals? Defaults to \code{TRUE}.}
+
+\item{S}{\code{logical} if \code{TRUE} the \eqn{G} matrix similarity statistic ised used. Else the \eqn{G \prime} statistic is used. Defaults to code{FALSE}.}
+
+\item{REPEATS}{\code{numeric} Number of random input orders tested. Defaults to 1000.}
+
 \item{dir}{\code{character} with directory to use for analysis.}
 
 \item{clean}{\code{logical} should input and output files be deleted after analysis is finished?}
+
+\item{verbose}{\code{logical} should messages be printed during processing?}
 }
 \description{
 This function analyses data using Structure.

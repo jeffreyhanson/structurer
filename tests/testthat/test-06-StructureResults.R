@@ -7,15 +7,7 @@ test_that('StructureResults', {
 	sample.names(sd) <- as.character(seq_len(n.samples(sd)))
 	write.StructureData(sd,file.path(dir, 'data.txt'))
 	# identify bayescan path
-	structure.path <- switch(
-		Sys.info()['sysname'],
-		'Linux'=system.file('bin', 'structure_linux', package='structurer'),
-		'Darwin'=system.file('bin', 'structure_mac', package='structurer'),
-		'Windows'=system.file('bin', 'structure_win.exe', package='structurer')
-	)
-	# update permissions
-	if (!grepl(basename(structure.path), 'win'))
-		system(paste0('chmod 700 ',structure.path))
+	structure.path <- system.file('bin', 'structure', package='structurer')
 	# run BayeScan
 	system(paste0(structure.path, ' ', ' -m ',file.path(dir, 'mainparams.txt'),' -e ',file.path(dir, 'extraparams.txt'),' -K ',2,' -L ',n.loci(sd),' -N ',n.samples(sd),' -i ',file.path(dir, 'data.txt'),' -o ',file.path(dir, 'output.txt')))
 	# try reading results back into R

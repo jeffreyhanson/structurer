@@ -14,6 +14,7 @@
 #' @importFrom ggplot2 ggtitle
 #' @importFrom ggplot2 xlab
 #' @importFrom ggplot2 ylab
+#' @importFrom ggplot2 geom_violin
 
 #' @importFrom testthat test_that
 #' @importFrom testthat expect_true

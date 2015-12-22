@@ -34,7 +34,7 @@ setClass(
 StructureResults<-function(replicates, opts=ClumpOpts(), dir=tempdir()) {
 	### clumpp analysis to combine replicates
 	# sink replicates to file
-	if (length(replicates)>1) {
+	if (length(replicates)>1 & n.pop(replicates[[1]])>1) {
 		# init
 		clumpp.path <- switch(
 			Sys.info()['sysname'],

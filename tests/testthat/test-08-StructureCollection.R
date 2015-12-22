@@ -11,7 +11,7 @@ test_that('run.Structure', {
 	sample.membership(sc, 0.75)
 	summary(sc)
 	loglik.plot(sc)
-	delta.plot(sc)
+	delta.k.plot(sc)
 })
 
  

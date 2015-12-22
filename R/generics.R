@@ -130,4 +130,4 @@ loglik.plot <- function(x, main) UseMethod('loglik.plot')
 #' @param x \code{StructureCollection} object.
 #' @param main \code{character} plot title.
 #' @seealso \code{\link{StructureCollection}}.
-delta.plot <- function(x, main) UseMethod('delta.plot')
+delta.k.plot <- function(x, main) UseMethod('delta.k.plot')

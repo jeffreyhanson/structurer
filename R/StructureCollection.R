@@ -203,23 +203,26 @@ loglik.plot.StructureCollection <- function(x, main='') {
 	# extract data
 	dat <- lapply(x@analyses, function(y) {
 		lapply(y@results@replicates, function(z) {
-			data.frame(k=ncol(z@matrix), loglik=z@loglik)
+			data.frame(k=as.character(ncol(z@matrix)), loglik=z@loglik)
 		})
 	})
 	dat <- do.call(rbind, unlist(dat, recursive=FALSE))
+	dat.summary <- data.frame(k=as.numeric(as.character(unique(dat$k))), loglik=tapply(dat$loglik, dat$k, mean))
 	# make plot
-	ggplot(aes_string(x='k', y='loglik'), data=dat) +
-		geom_violin() +
+	ggplot() +
+		geom_violin(aes_string(x='k', y='loglik'), data=dat) +
+		geom_line(aes_string(x='k', y='loglik'), data=dat.summary) +
+		geom_point(aes_string(x='k', y='loglik'), data=dat.summary) +
 		theme_classic() +
 		xlab('Number of populations (k)') +
 		ylab('Negative log-likelihood') +
 		ggtitle(main)
 }
 
-#' @rdname delta.plot
-#' @method delta.plot StructureCollection
+#' @rdname delta.k.plot
+#' @method delta.k.plot StructureCollection
 #' @export
-delta.plot.StructureCollection <- function(x, main='Delta-K plot') {
+delta.k.plot.StructureCollection <- function(x, main='Delta-K plot') {
 	## make plot
 	ggplot(data=x@summary) +
 		geom_point(aes_string(y='delta.k', x='k')) +

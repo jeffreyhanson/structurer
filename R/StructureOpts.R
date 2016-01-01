@@ -233,7 +233,7 @@ OUTPUT OPTIONS
 
 #define SITEBYSITE   0  // (B) whether or not to print site by site results. (Linkage model only) This is a large file!
 #define PRINTQHAT    0  // (B) Q-hat printed to a separate file.  Turn this on before using STRAT.
-#define UPDATEFREQ   100  // (int) frequency of printing update on the screen. Set automatically if this is 0.
+#define UPDATEFREQ   10000  // (int) frequency of printing update on the screen. Set automatically if this is 0.
 #define PRINTLIKES   0  // (B) print current likelihood to screen every rep
 #define INTERMEDSAVE 0  // (int) number of saves to file during run
 

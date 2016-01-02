@@ -97,8 +97,10 @@ run.Structure<-function(x, NUMRUNS=2, MAXPOPS=1:10, BURNIN=10000, NUMREPS=20000,
 		StructureCollection(
 			analyses=lapply(MAXPOPS, function(n) {
 				if (verbose) cat('starting MAXPOPS: ',n,'\n')
+				curr.dir <- paste0(dir,'/k',n)
+				dir.create(curr.dir)
 				run.single.Structure(x, NUMRUNS=NUMRUNS, MAXPOPS=n, BURNIN=BURNIN, NUMREPS=NUMREPS, NOADMIX=NOADMIX, ADMBURNIN=ADMBURNIN, SEED=SEED,
-					M=M, W=W, S=S, REPEATS=REPEATS, dir=dir, clean=clean, verbose=verbose)
+					M=M, W=W, S=S, REPEATS=REPEATS, dir=curr.dir, clean=clean, verbose=verbose)
 			})
 		)
 	)

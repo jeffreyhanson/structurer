@@ -156,7 +156,9 @@ run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20
 						# delete extra files created by structure
 						if (file.exists('seed.txt')) unlink('seed.txt')
 						if (file.exists(file.path(dir,'seed.txt'))) unlink(file.path(dir,'seed.txt'))
-						return(read.StructureReplicate(file.path(dir, 'output.txt_f')))
+						file.rename(file.path(dir, 'structure_log.txt'), paste0(dir, '/structure_run_',i,'_log.txt'))
+						file.rename(file.path(dir, 'output.txt_f'), paste0(dir, '/output_run_',i,'.txt_f'))
+						return(read.StructureReplicate(paste0(dir, '/output_run_',i,'.txt_f')))
 					}
 				),
 				opts2

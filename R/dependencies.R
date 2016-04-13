@@ -5,6 +5,15 @@
 
 #' @importFrom parallel detectCores
 
+#' @importFrom snow makeCluster
+#' @importFrom snow stopCluster
+#' @importFrom snow clusterEvalQ
+#' @importFrom snow clusterExport
+
+#' @importFrom doSNOW registerDoSNOW
+
+#' @importFrom plyr llply
+
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 geom_point
 #' @importFrom ggplot2 geom_errorbar

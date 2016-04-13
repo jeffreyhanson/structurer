@@ -37,12 +37,6 @@ setClass(
 		expect_equal(ncol(object@matrix), n.pop)
 		expect_equal(nrow(object@matrix), n.inds)
 		expect_equal(nrow(object@matrix), length(object@sample.names))
-		# check alpha
-		if (n.pop > 1) {
-			expect_true(is.finite(slot(object, 'alpha')))
-		} else {
-			expect_true(is.na(slot(object, 'alpha')))
-		}
 		return(TRUE)
 	}
 )

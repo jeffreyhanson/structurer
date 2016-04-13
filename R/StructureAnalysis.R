@@ -122,6 +122,8 @@ sample.membership.StructureAnalysis <- function(x, threshold=NULL) {
 #' @inheritParams StructureOpts
 #' @inheritParams ClumppOpts
 #' @inheritParams run.Structure
+#' @param threads \code{numeric} number of threads to use for processing. Defaults to 1.
+#'
 #' @seealso \code{StructureData}, \code{StructureOpts}.
 #' @examples
 #' # run Structure using low number of iterations
@@ -130,7 +132,7 @@ sample.membership.StructureAnalysis <- function(x, threshold=NULL) {
 #'	NUMREPS=10, NOADMIX=FALSE, ADMBURNIN=10)
 #' @export
 run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, SEED=NA_real_,
-	M='Greedy', W=TRUE, S=FALSE, REPEATS=1000, dir=tempdir(), clean=TRUE, verbose=FALSE)
+	M='Greedy', W=TRUE, S=FALSE, REPEATS=1000, dir=tempdir(), clean=TRUE, verbose=FALSE, threads=1)
 {
 	## initialization
 	# argument checks
@@ -145,27 +147,34 @@ run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20
 	# sink opts and data to file
 	write.StructureOpts(opts,dir)
 	write.StructureData(x,file.path(dir, 'data.txt'))
+	# setup cluster
+	clust <- makeCluster(threads,'SOCK')
+	clusterEvalQ(clust, {library(structurer)})
+	clusterExport(clust, c('structure.path','dir','MAXPOPS','x', 'verbose'), envir=environment())
+	registerDoSNOW(clust)
 	# run BayeScan
 	ret <- StructureAnalysis(
 			results=StructureResults(
-				replicates=lapply(
+				replicates=llply(
 					seq_len(opts@NUMRUNS),
 					function(i) {
 						if (verbose) cat('\tstarting structure replicate ',i,'\n')
-						o<-system(paste0(structure.path, ' ', '-m ',file.path(dir, 'mainparams.txt'),' -e ',file.path(dir, 'extraparams.txt'),' -K ',MAXPOPS,' -L ',n.loci(x),' -N ',n.samples(x),' -i ',file.path(dir, 'data.txt'),' -o ',file.path(dir, 'output.txt'), ' > ',file.path(dir,'structure_log.txt'),' 2>&1'), intern=TRUE)
+						o<-system(paste0(structure.path, ' ', '-m ',file.path(dir, 'mainparams.txt'),' -e ',file.path(dir, 'extraparams.txt'),' -K ',MAXPOPS,' -L ',n.loci(x),' -N ',n.samples(x),' -i ',file.path(dir, 'data.txt'),' -o ', paste0(dir, '/output_run_',i,'.txt'), ' > ',paste0(dir, '/structure_run_',i,'_log.txt'),' 2>&1'), intern=TRUE)
 						# delete extra files created by structure
 						if (file.exists('seed.txt')) unlink('seed.txt')
 						if (file.exists(file.path(dir,'seed.txt'))) unlink(file.path(dir,'seed.txt'))
-						file.rename(file.path(dir, 'structure_log.txt'), paste0(dir, '/structure_run_',i,'_log.txt'))
-						file.rename(file.path(dir, 'output.txt_f'), paste0(dir, '/output_run_',i,'.txt_f'))
+						# read results
 						return(read.StructureReplicate(paste0(dir, '/output_run_',i,'.txt_f')))
-					}
+					},
+					.parallel=TRUE
 				),
 				opts2
 			),
 			data=x,
 			opts=opts
 		)
+	# kill cluster
+	clust <- stopCluster(clust)
 	# if clean then delete files
 	if (clean) unlink(dir)
 	# return results

@@ -7,7 +7,7 @@
 run.Structure(x, NUMRUNS = 2, MAXPOPS = 1:10, BURNIN = 10000,
   NUMREPS = 20000, NOADMIX = FALSE, ADMBURNIN = 500, SEED = NA_real_,
   M = "Greedy", W = TRUE, S = FALSE, REPEATS = 1000, dir = tempdir(),
-  clean = TRUE, verbose = FALSE)
+  clean = TRUE, verbose = FALSE, threads = 1)
 }
 \arguments{
 \item{x}{\code{StructureData} object.}
@@ -39,6 +39,8 @@ run.Structure(x, NUMRUNS = 2, MAXPOPS = 1:10, BURNIN = 10000,
 \item{clean}{\code{logical} should input and output files be deleted after analysis is finished?}
 
 \item{verbose}{\code{logical} should messages be printed during processing?}
+
+\item{threads}{\code{numeric} number of threads to use for processing. Defaults to 1.}
 }
 \description{
 This function analyses data using Structure.

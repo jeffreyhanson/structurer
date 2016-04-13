@@ -81,6 +81,7 @@ StructureCollection<-function(analyses) {
 #' @param dir \code{character} with directory to use for analysis.
 #' @param clean \code{logical} should input and output files be deleted after analysis is finished?
 #' @param verbose \code{logical} should messages be printed during processing?
+#' @param threads \code{numeric} number of threads to use for processing. Defaults to 1.
 #' @seealso \code{StructureData}, \code{StructureOpts}.
 #' @examples
 #' # run Structure using low number of iterations
@@ -89,7 +90,7 @@ StructureCollection<-function(analyses) {
 #' print(x)
 #' @export
 run.Structure<-function(x, NUMRUNS=2, MAXPOPS=1:10, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, SEED=NA_real_,
-	M='Greedy', W=TRUE, S=FALSE, REPEATS=1000, dir=tempdir(), clean=TRUE, verbose=FALSE)
+	M='Greedy', W=TRUE, S=FALSE, REPEATS=1000, dir=tempdir(), clean=TRUE, verbose=FALSE, threads=1)
 {
 	test_that('argument to MAXPOPS have at least 3 elements', expect_true(length(MAXPOPS) >= 3))
 	# run analysis
@@ -100,7 +101,7 @@ run.Structure<-function(x, NUMRUNS=2, MAXPOPS=1:10, BURNIN=10000, NUMREPS=20000,
 				curr.dir <- paste0(dir,'/k',n)
 				dir.create(curr.dir)
 				run.single.Structure(x, NUMRUNS=NUMRUNS, MAXPOPS=n, BURNIN=BURNIN, NUMREPS=NUMREPS, NOADMIX=NOADMIX, ADMBURNIN=ADMBURNIN, SEED=SEED,
-					M=M, W=W, S=S, REPEATS=REPEATS, dir=curr.dir, clean=clean, verbose=verbose)
+					M=M, W=W, S=S, REPEATS=REPEATS, dir=curr.dir, clean=clean, verbose=verbose, threads=1)
 			})
 		)
 	)

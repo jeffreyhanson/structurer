@@ -54,7 +54,9 @@ StructureResults<-function(replicates, opts=ClumpOpts(), dir=tempdir()) {
 		if (file.exists('perm_data.txt')) unlink('perm_data.txt')
 		if (file.exists(file.path(dir,'perm_data.txt'))) unlink(file.path(dir,'perm_data.txt'))
 		# load in replicates
-		summary.dat <- read.ClumppReplicates(file.path(dir,'outfile.txt'))
+		summary.dat <- try(read.ClumppReplicates(file.path(dir,'outfile.txt')))
+		if (inherits(summary.dat, 'try-error'))
+		stop(paste(readLines(file.path(dir, 'clumpp.log')), collapse='\n'))
 	} else {
 		summary.dat <- replicates[[1]]@matrix
 	}

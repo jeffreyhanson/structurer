@@ -168,7 +168,8 @@ run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20
 					},
 					.parallel=TRUE
 				),
-				opts2
+				opts2,
+				dir=dir
 			),
 			data=x,
 			opts=opts

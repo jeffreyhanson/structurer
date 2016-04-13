@@ -42,6 +42,9 @@ StructureResults<-function(replicates, opts=ClumpOpts(), dir=tempdir()) {
 			'Darwin'=system.file('bin', 'CLUMPP_mac', package='structurer'),
 			'Windows'=system.file('bin', 'CLUMPP_win.exe', package='structurer')
 		)
+		# update permissions
+		if (!grepl(basename(clumpp.path), 'win'))
+			system(paste0('chmod 700 ',clumpp.path))
 		# sink replicates to file
 		write.ClumppOpts(opts, file.path(dir, 'paramfile'))
 		write.ClumppReplicates(replicates, file.path(dir,'popfile.txt'))

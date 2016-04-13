@@ -22,6 +22,9 @@ r_binary_packages:
   - cluster
   - vegan
   - testthat
+  - doSNOW
+  - plyr
+  - snow
 
 r_packages:
   - covr

@@ -4,11 +4,11 @@
 #' @importFrom data.table fread
 
 #' @importFrom parallel detectCores
-
-#' @importFrom snow makeCluster
-#' @importFrom snow stopCluster
-#' @importFrom snow clusterEvalQ
-#' @importFrom snow clusterExport
+#' @importFrom doParallel registerDoParallel
+#' @importFrom parallel makeCluster
+#' @importFrom parallel stopCluster
+#' @importFrom parallel clusterEvalQ
+#' @importFrom parallel clusterExport
 
 #' @importFrom doSNOW registerDoSNOW
 

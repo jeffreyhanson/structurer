@@ -148,10 +148,10 @@ run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20
 	write.StructureOpts(opts,dir)
 	write.StructureData(x,file.path(dir, 'data.txt'))
 	# setup cluster
-	clust <- makeCluster(threads,'SOCK')
+	clust <- makeCluster(threads,type='PSOCK', outfile="")
 	clusterEvalQ(clust, {library(structurer)})
 	clusterExport(clust, c('structure.path','dir','MAXPOPS','x', 'verbose'), envir=environment())
-	registerDoSNOW(clust)
+	registerDoParallel(clust)
 	# run BayeScan
 	ret <- StructureAnalysis(
 			results=StructureResults(

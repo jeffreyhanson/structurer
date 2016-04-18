@@ -22,9 +22,9 @@ r_binary_packages:
   - cluster
   - vegan
   - testthat
-  - doSNOW
+  - doParallel
   - plyr
-  - snow
+  - parallel
 
 r_packages:
   - covr

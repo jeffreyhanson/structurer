@@ -14,7 +14,9 @@ Imports:
     data.table,
     testthat,
     parallel,
-    ggplot2
+    doParallel,
+    ggplot2,
+    plyr
 Depends:
     R(>= 3.1.0)
 LazyData: true

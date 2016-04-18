@@ -10,8 +10,6 @@
 #' @importFrom parallel clusterEvalQ
 #' @importFrom parallel clusterExport
 
-#' @importFrom doSNOW registerDoSNOW
-
 #' @importFrom plyr llply
 
 #' @importFrom ggplot2 ggplot

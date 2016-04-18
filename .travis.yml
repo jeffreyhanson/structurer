@@ -22,9 +22,7 @@ r_binary_packages:
   - cluster
   - vegan
   - testthat
-  - doParallel
   - plyr
-  - parallel
 
 r_packages:
   - covr

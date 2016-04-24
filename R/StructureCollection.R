@@ -89,7 +89,7 @@ StructureCollection<-function(analyses) {
 #' x <- run.Structure(dat, NUMRUNS=2, MAXPOPS=1:3, BURNIN=10, NUMREPS=10, NOADMIX=FALSE, ADMBURNIN=10)
 #' print(x)
 #' @export
-run.Structure<-function(x, NUMRUNS=2, MAXPOPS=1:10, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, SEED=NA_real_,
+run.Structure<-function(x, NUMRUNS=2, MAXPOPS=1:10, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500,
 	M='Greedy', W=TRUE, S=FALSE, REPEATS=1000, dir=tempdir(), clean=TRUE, verbose=FALSE, threads=1)
 {
 	test_that('argument to MAXPOPS have at least 3 elements', expect_true(length(MAXPOPS) >= 3))
@@ -100,7 +100,7 @@ run.Structure<-function(x, NUMRUNS=2, MAXPOPS=1:10, BURNIN=10000, NUMREPS=20000,
 				if (verbose) cat('starting MAXPOPS: ',n,'\n')
 				curr.dir <- paste0(dir,'/k',n)
 				dir.create(curr.dir)
-				run.single.Structure(x, NUMRUNS=NUMRUNS, MAXPOPS=n, BURNIN=BURNIN, NUMREPS=NUMREPS, NOADMIX=NOADMIX, ADMBURNIN=ADMBURNIN, SEED=SEED,
+				run.single.Structure(x, NUMRUNS=NUMRUNS, MAXPOPS=n, BURNIN=BURNIN, NUMREPS=NUMREPS, NOADMIX=NOADMIX, ADMBURNIN=ADMBURNIN,
 					M=M, W=W, S=S, REPEATS=REPEATS, dir=curr.dir, clean=clean, verbose=verbose, threads=1)
 			})
 		)

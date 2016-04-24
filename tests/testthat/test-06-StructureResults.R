@@ -1,7 +1,7 @@
 test_that('StructureResults', {
 	# create data
 	dir<-tempdir()
-	so <- StructureOpts(MAXPOPS=2, BURNIN=10, NUMREPS=10, NOADMIX=FALSE, ADMBURNIN=10, SEED=NA_real_)
+	so <- StructureOpts(MAXPOPS=2, BURNIN=10, NUMREPS=10, NOADMIX=FALSE, ADMBURNIN=10, SEED=1:2)
 	write.StructureOpts(so,dir)
 	sd <- read.StructureData(system.file('extdata', 'example_fstat_aflp.dat', package='structurer'))
 	sample.names(sd) <- as.character(seq_len(n.samples(sd)))

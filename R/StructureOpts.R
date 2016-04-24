@@ -44,6 +44,10 @@ setClass(
 				expect_equal(length(slot(object, x)),1)
 				return(invisible())
 		})
+		# check that all seeds are finite
+		expect_true(all(!is.na(object@SEED)))
+		# check number of seeds equal to number of runs
+		expect_equal(length(object@SEED),object@NUMRUNS)
 		# check not NA
 		expect_true(!is.na(object@NOADMIX))
 		return(TRUE)
@@ -65,7 +69,7 @@ setClass(
 #' @examples 
 #' StructureOpts(MAXPOPS=2, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, SEED=NA_real_)
 #' @export
-StructureOpts<-function(NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, SEED=NA_real_) {
+StructureOpts<-function(NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, SEED=sample.int(1e5,NUMRUNS)) {
 	x<-new("StructureOpts", NUMRUNS=NUMRUNS, MAXPOPS=MAXPOPS, BURNIN=BURNIN, NUMREPS=NUMREPS, NOADMIX=NOADMIX, ADMBURNIN=ADMBURNIN, SEED=SEED)
 	validObject(x, test=FALSE)
 	return(x)
@@ -248,8 +252,8 @@ MISCELLANEOUS
 #define ADMBURNIN  ',x@ADMBURNIN,'    // (int) [only relevant for linkage model]: Initial period of burnin with admixture model (see Readme)
 #define ALPHAPROPSD 0.025 // (d) SD of proposal for updating alpha
 #define STARTATPOPINFO 0  // Use given populations as the initial condition for population origins.  (Need POPDATA==1).  It is assumed that the PopData in the input file are between 1 and k where k<=MAXPOPS.
-#define RANDOMIZE      ',is.na(x@SEED),'  // (B) use new random seed for each run 
-#define SEED        ',ifelse(is.na(x@SEED),1, x@SEED),'  // (int) seed value for random number generator (must set RANDOMIZE=0) 
+#define RANDOMIZE    0    // (B) use new random seed for each run 
+#define SEED        100  // (int) seed value for random number generator (must set RANDOMIZE=0) 
 #define METROFREQ    10   // (int) Frequency of using Metropolis step to update Q under admixture model (ie use the metr. move every i steps).  If this is set to 0, it is never used. (Proposal for each q^(i) sampled from prior.  The goal is to improve mixing for small alpha.)
 #define REPORTHITRATE 0 //   (B) report hit rate if using METROFREQ
 

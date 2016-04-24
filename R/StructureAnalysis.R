@@ -131,7 +131,7 @@ sample.membership.StructureAnalysis <- function(x, threshold=NULL) {
 #' x <- run.single.Structure(dat, NUMRUNS=1, MAXPOPS=2, BURNIN=10,
 #'	NUMREPS=10, NOADMIX=FALSE, ADMBURNIN=10)
 #' @export
-run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, SEED=NA_real_,
+run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, SEED=sample.int(1e5,NUMRUNS),
 	M='Greedy', W=TRUE, S=FALSE, REPEATS=1000, dir=tempdir(), clean=TRUE, verbose=FALSE, threads=1)
 {
 	## initialization
@@ -148,7 +148,7 @@ run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20
 	write.StructureOpts(opts,dir)
 	write.StructureData(x,file.path(dir, 'data.txt'))
 	# setup cluster
-	clust <- makeCluster(threads,type='PSOCK', outfile="")
+	clust <- makeCluster(threads,type='PSOCK')
 	clusterEvalQ(clust, {library(structurer)})
 	clusterExport(clust, c('structure.path','dir','MAXPOPS','x', 'verbose'), envir=environment())
 	registerDoParallel(clust)
@@ -159,7 +159,7 @@ run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20
 					seq_len(opts@NUMRUNS),
 					function(i) {
 						if (verbose) cat('\tstarting structure replicate ',i,'\n')
-						o<-system(paste0(structure.path, ' ', '-m ',file.path(dir, 'mainparams.txt'),' -e ',file.path(dir, 'extraparams.txt'),' -K ',MAXPOPS,' -L ',n.loci(x),' -N ',n.samples(x),' -i ',file.path(dir, 'data.txt'),' -o ', paste0(dir, '/output_run_',i,'.txt'), ' > ',paste0(dir, '/structure_run_',i,'_log.txt'),' 2>&1'), intern=TRUE)
+						o<-system(paste0(structure.path, ' ', '-m ',file.path(dir, 'mainparams.txt'),' -e ',file.path(dir, 'extraparams.txt'),' -K ',MAXPOPS,' -L ',n.loci(x),' -N ',n.samples(x),' -i ',file.path(dir, 'data.txt'),' -o ', paste0(dir, '/output_run_',i,'.txt'), ' -D ',opts@SEED[i], ' > ',paste0(dir, '/structure_run_',i,'_log.txt'),' 2>&1'), intern=TRUE)
 						# delete extra files created by structure
 						if (file.exists('seed.txt')) unlink('seed.txt')
 						if (file.exists(file.path(dir,'seed.txt'))) unlink(file.path(dir,'seed.txt'))

@@ -1,4 +1,4 @@
-//#include "structure.h"
+/* #include "structure.h" */
 void
 DataCollection (int *Geno,int *PreGeno, double *Q, double *QSum, int *Z, int *Z1, double *SiteBySiteSum, double *P, double *PSum,
 		double *Fst, double *FstSum, int *NumAlleles,
@@ -10,7 +10,7 @@ DataCollection (int *Geno,int *PreGeno, double *Q, double *QSum, int *Z, int *Z1
 		double *PopPrior, double *PopPriorSum, int PopPriorLen,
 		double *sumindlikes, double *indlikes_norm, int rep);
 
-void PrintLike (double like, int rep, int *Geno, double *Q, double *P, 
+void PrintLike (double like, int rep, int *Geno, int *PreGeno, double *Q, double *P, 
 		double recomblikelihood);
 void PrintUpdate (int rep, int *Geno, int *PreGeno, double *Alpha, double *Correls, 
 		  double *P, double *Q, double like, double sumlikes, 

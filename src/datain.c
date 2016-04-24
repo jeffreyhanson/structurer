@@ -46,7 +46,7 @@ ReadInputFile (int *Geno, double *Mapdistance, char *Markername, struct IND *Ind
 void 
 OpenData ()
 {
-  //  int trouble = 0;
+  /*  int trouble = 0; */
   INPUT = fopen (DATAFILE, "r");
 
   if (INPUT == NULL)
@@ -75,16 +75,16 @@ ReadData (int *Geno, double *Mapdistance, char *Markername, struct IND *Individu
   int phen=-1;
   int strlength;
   int valid = 1;
-  //  int polymorphismcounter;
-  // int toggle;
+  /*  int polymorphismcounter; */
+  /* int toggle; */
   int rowsperind;  /*the next 2 variables allow single-row input for data*/
   int colsperloc;  /*number of columns per locus = 1 or PLOIDY depending on format*/ 
   int i,j;
-  //  int loc1,loc2,temp;
+  /*  int loc1,loc2,temp; */
   int *inputorder = malloc(NUMLOCI*sizeof(int));
   int location=-1;
   int phenotypecol=-1;
-  //  int numcols;
+  /*  int numcols; */
   int CheckIfValidDouble (char intstr[ALLELLEN], int ind,int loc);
 
 
@@ -134,7 +134,7 @@ inputorder[loc2]=temp;
 	if (strlength == 0)
 	  WarnEOF (ind);
 	
-	// daniel made the change: change from atoi to atof on Dec 24, 2002
+	/* daniel made the change: change from atoi to atof on Dec 24, 2002 */
 	Mapdistance[loc] = (double) atof (intstr);
       }
   /*End reading in locus information-------------------------------
@@ -169,7 +169,7 @@ inputorder[loc2]=temp;
 	      valid = valid * CheckIfValidInt (intstr, ind, loc);
 	      popflag = atoi (intstr);
 	    }
-	  //melissa added 7/12/07
+	  /* melissa added 7/12/07 */
 	  if (LOCDATA==1) {
 	    strlength = ReadString(intstr, ALLELLEN, INPUT);
 	    if (strlength ==0)
@@ -232,7 +232,7 @@ inputorder[loc2]=temp;
 	      if (PHENOTYPE)
 		Individual[ind].Phenotype = phen;
 
-	      //melissa added 7/12/07
+	      /* melissa added 7/12/07 */
 	      if (LOCDATA)
 		Individual[ind].Location = location;
 	      if (LOCISPOP) 
@@ -277,7 +277,7 @@ inputorder[loc2]=temp;
 		if (ONEROWPERIND) Geno[GenPos (ind, i, inputorder[loc])] = atoi (intstr);
 		else Geno[GenPos (ind, line, inputorder[loc])] = atoi (intstr);
 	      }
-	//printf(" % 4ld % 4ld % 4ld     .....    % 4ld % 4ld \n",Geno[GenPos(ind,line,0)],Geno[GenPos(ind,line,1)],Geno[GenPos(ind,line,2)],Geno[GenPos(ind,line,NUMLOCI-2)],Geno[GenPos(ind,line,NUMLOCI-1)]);
+	/* printf(" % 4ld % 4ld % 4ld     .....    % 4ld % 4ld \n",Geno[GenPos(ind,line,0)],Geno[GenPos(ind,line,1)],Geno[GenPos(ind,line,2)],Geno[GenPos(ind,line,NUMLOCI-2)],Geno[GenPos(ind,line,NUMLOCI-1)]); */
 	}
 
       if (PHASEINFO) /*possibly read in row of phase information*/
@@ -319,10 +319,10 @@ inputorder[loc2]=temp;
 }
 /*------------------------------------*/
 void RecessiveDataCheck(int *Geno, int *Recessive)
-     //this function checks whether any genotypes have both a recessive and dominant
-     //allele.  If any do, it terminates the program.
-     // in the polyploid case, it also checks whether the NOTAMBIGUOUS code is anywhere 
-     // in the datset. If it is it also terminates the program.
+    /* this function checks whether any genotypes have both a recessive and dominant
+     * allele.  If any do, it terminates the program.
+     * in the polyploid case, it also checks whether the NOTAMBIGUOUS code is anywhere 
+     * in the datset. If it is it also terminates the program. */
 {
   int ind, line, loc;
   int rec, dom;
@@ -490,7 +490,7 @@ PrintSomeData (int *Geno, struct IND *Individual, FILE * file)
   int ind, line;
   int col = 0;
   int precols;
-  //  int loc;
+  /*  int loc; */
 
   fprintf (file, "\n\nData file \"%s\" (truncated) --\n\n", DATAFILE);
   fprintf (file, "Ind:   ");
@@ -808,7 +808,7 @@ void CountAlleles (int *Geno, int *NumAlleles, int *Translation, int *Recessive)
       if (RECESSIVEALLELES && Recessive[loc]==NOTAMBIGUOUS) 
 {
   Recessive[loc]=newnotambiguous;
-  //printf("locus %d is NOTAMBIGUOUS\n" ,loc);
+  /* printf("locus %d is NOTAMBIGUOUS\n" ,loc); */
 }
       recessivecoded = 0;
       k = 0;

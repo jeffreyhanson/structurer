@@ -1,38 +1,50 @@
-#### Parameters
-optimization = -O3
+OPT = -O3
+#OPT = -O3 -m64 -static
+#OPT = -Wall -g 
 
-all: structure
-	cp structure ../inst/bin/structure
+CFLAGS = -Wall -pedantic
+CC = gcc
+LIBS = -lm
 
-clean:
-	rm *.o structure
+all: target
 
-##### structure makefile
+target: structure 
+
+#valgrind: OPT = -g -O1
+#valgrind: CFLAGS += -g
+#valgrind: clean
+#valgrind: target
+
+#debug: OPT = -g -O1
+#debug: CFLAGS += -g
+#debug: clean
+#debug: target
+
 structure: structure.o params.o datain.o output.o ran.o mymath.o
-	gcc -o structure structure.o params.o datain.o output.o ran.o mymath.o $(optimization) -lm
+	$(CC) -o structure structure.o params.o datain.o output.o ran.o mymath.o $(OPT) $(LIBS)
 
-STRAT: STRAT.o params.o datain.o ran.o mymath.o
-	gcc -o STRAT STRAT.o params.o datain.o ran.o mymath.o  -lm $(optimization) 
+#STRAT: STRAT.o params.o datain.o ran.o mymath.o
+#	$(CC) -o STRAT STRAT.o params.o datain.o ran.o mymath.o $(OPT) $(LIBS)
 
-STRAT.o: STRAT.c
-	gcc -c STRAT.c $(optimization)
+#STRAT.o: STRAT.c
+#	$(CC) -c STRAT.c  $(OPT) $(CFLAGS)
 
 structure.o: structure.c
-	gcc -c structure.c $(optimization) 
+	$(CC) -c structure.c $(OPT) $(CFLAGS)
 
 output.o: output.c
-	gcc -c output.c $(optimization) 
+	$(CC) -c output.c $(OPT) $(CFLAGS)
 
 datain.o: datain.c
-	gcc -c datain.c $(optimization) 
+	$(CC) -c datain.c $(OPT) $(CFLAGS)
 
 params.o: params.c
-	gcc -c params.c $(optimization) 
+	$(CC) -c params.c $(OPT) $(CFLAGS)
 
 ran.o: ran.c
-	gcc -c ran.c $(optimization) 
+	$(CC) -c ran.c $(OPT) $(CFLAGS)
 
 mymath.o: mymath.c
-	gcc -c mymath.c $(optimization) 
-
-	
+	$(CC) -c mymath.c $(OPT) $(CFLAGS)
+clean:
+	@rm -f *.o structure

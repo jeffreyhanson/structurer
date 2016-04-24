@@ -52,8 +52,8 @@ void GetParams(int strat, int argc, char *argv[])
        the command line for a few special parameters*/
 {
   
-  // William Wen made change: length from 50 to 500, avoid buffer overflow
-  // in case user choose a very long path/file name.
+  /* William Wen made change: length from 50 to 500, avoid buffer overflow
+   * in case user choose a very long path/file name. */
   char filename[500]; 
   int SetUpdateFreq();
 
@@ -153,8 +153,8 @@ void InputFileNames(int argc, char *argv[], char filename[], char flag[50])
       {
 	found = 1;
 	
-	// modify by William to enable user to use space character in path/file name
-	// Jan 29, 2003
+	/* modify by William to enable user to use space character in path/file name
+         * Jan 29, 2003 */
 	j=i+1;
 	while(argv[j][0]!='-'&&j<argc){
 	  strcat(filename,argv[j]);
@@ -165,8 +165,8 @@ void InputFileNames(int argc, char *argv[], char filename[], char flag[50])
 	}
 	filename[strlen(filename)-1]='\0';
 	
-	//sprintf (filename,"%s",argv[i+1]); 
-	// end of modification
+	/* sprintf (filename,"%s",argv[i+1]); */
+        /* end of modification */
 	
 	break;
       }
@@ -179,8 +179,8 @@ void InputFileNames(int argc, char *argv[], char filename[], char flag[50])
     }
   
 
-  // modify by William to enable user to use space character in path/file name
-  // Jan 29, 2003
+  /* modify by William to enable user to use space character in path/file name
+   * Jan 29, 2003 */
  
   for(i=0;i<strlen(filename);i++){
     if(filename[i]=='\"'){           /*" [fix highlighting*/
@@ -231,14 +231,14 @@ void GetParamValue()
 }
 /*-------------------------------------------*/
 int  ReadSpaceString(char Word[],int maxlength,FILE *THEFILE)
-     // Add in by William Wen, for reading space-allowed path/file name
-     // read through the string, includs all intermediate spaces, terminate
-     // reading at "//" sign or new line.
+    /* Add in by William Wen, for reading space-allowed path/file name
+     * read through the string, includs all intermediate spaces, terminate
+     * reading at "//" sign or new line. */
 {
   char next;
   char last=0;
   int length = 0;
-  //  int white; /* 1 if next is whitespace*/
+  /*  int white; */ /* 1 if next is whitespace*/
   int temp_length;
   
   while (length<maxlength-1) 
@@ -335,8 +335,8 @@ void SetValue(char Word[])
   if (VERBOSE) printf("Reading value of \"%s\"\n",Word);
 
 
-  // William modify this to fit the requirement of widows,
-  // where space is allowed in path and file name.
+  /* William modify this to fit the requirement of windows,
+   * where space is allowed in path and file name. */
   if (!(strcmp(Word,"INFILE"))) {ReadSpaceString(DATAFILE,STRLEN,PARAMS);
   
   printf("datafile is\n%s\n",DATAFILE);
@@ -449,7 +449,7 @@ int Whitespace(char next)
 /*-------------------------------------------*/
 void OpenFile(char input[15])
 {
-  //  int trouble = 0;
+  /* int trouble = 0; */
   PARAMS = fopen(input,"r");
 
   if (PARAMS==NULL)
@@ -609,7 +609,7 @@ whether this was called from structure (0) or STRAT (1) */
       trouble=1;
     }
   }
-  if (LOCPRIOR && LINKAGE) //added JKP 2-27-09
+  if (LOCPRIOR && LINKAGE) /* added JKP 2-27-09 */
     {
       printf("Cannot run LOCPRIOR and the LINKAGE model together\n");
       trouble=1;
@@ -694,11 +694,11 @@ void PrintAllParams(FILE *file)
   fprintf(file,"METROFREQ=%d,\t",METROFREQ);
   fprintf(file,"REPORTHITRATE=%d,\t",REPORTHITRATE);
   fprintf(file,"MARKOVPHASE=%d,\t",MARKOVPHASE);
-  // Daniel made the change: adding the following lines on Dec 24, 2002
+  /* Daniel made the change: adding the following lines on Dec 24, 2002 */
   fprintf(file,"PHASED=%d,\t",PHASED);
   fprintf(file,"PLOIDY=%d,\t",LINES);
   fprintf(file,"PHASEINFO=%d\t",PHASEINFO);
-  //Melissa added 7/12/07
+  /* Melissa added 7/12/07 */
   fprintf(file, "LOCPRIOR=%d, \t", LOCPRIOR);
   fprintf(file, "LOCPRIORINIT=%f, \t", LOCPRIORINIT);
   fprintf(file, "LOCDATA=%d, \t", LOCDATA);
@@ -706,10 +706,10 @@ void PrintAllParams(FILE *file)
   fprintf(file, "LOCPRIORSTEP=%f, \t", LOCPRIORSTEP);
   fprintf(file, "MAXLOCPRIOR=%f, \t", MAXLOCPRIOR);
 
-    //seed: added Jan 08
+  /* seed: added Jan 08 */
   fprintf(file, "SEED=%d,\t", SEED);
 
-  // strat parameters: added June 03
+  /* strat parameters: added June 03 */
   fprintf(file, "\n[STRAT parameters]:    ");
   fprintf(file,"NUMSIMSTATS=%d,\t",NUMSIMSTATS);
   fprintf(file,"PHENOTYPECOL=%d,\t",PHENOTYPECOL);

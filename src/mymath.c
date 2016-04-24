@@ -222,7 +222,7 @@ value, and a pointer to the resulting degrees of freedom (df).*/
   int min1,min2,min3,all1,all2;
   double chisq = 0.0;
   int x1,x2;
-  //  double xbar;
+  /*  double xbar; */
   int t1, t2; /*total allele counts*/
   double e1, e2; /*exp allele counts*/
 
@@ -295,7 +295,7 @@ value, and a pointer to the resulting degrees of freedom (df).*/
 	}
       /*j++;
 	if (j>10) printf("%d %d %d %d %d %d\n",min1,min2,min3,all1,all2,numalleles);*/
-      //melissa added parentheses 7/12/07 to fix ambiguous and/or statement
+      /* melissa added parentheses 7/12/07 to fix ambiguous and/or statement */
     } while ((min1+min2 <= mincount || min3 <= mincount) && (numalleles>=1));
 
   /*printf("\nIn chisq: ");
@@ -368,7 +368,7 @@ Tested against Mathematica's Log[Gamma[x]]
   double tmp;
   if (z <= 0.)
     {
-      fprintf(stderr,"lgamma function failed with wrong input (%lf)\n",z);
+      fprintf(stderr,"lgamma function failed with wrong input (%f)\n",z);
       assert(0);
       exit(-1);
     }

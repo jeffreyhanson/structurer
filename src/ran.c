@@ -117,10 +117,17 @@ void Randomize(int RANDOMIZE, int *seed)
   if (RANDOMIZE) 
     *seed = (int)time(NULL);
   srand(*seed);
-  outfile = fopen("seed.txt", "a");
-  fprintf(outfile, "%i\n", *seed);
-  fclose(outfile);
-  //  srand((int) time(NULL) ); 
+	
+	
+	/* comment out saving of random numbers because these are passed in from R */
+	/* this prevents structure from crashing with parallel runs */
+	
+/*   outfile = fopen("seed.txt", "a"); */
+/*   fprintf(outfile, "%i\n", *seed); */
+/*   fclose(outfile); */
+	
+	
+  /*  srand((int) time(NULL) );  */
 }
 /*-------------------------------------*/
 double RandomReal(double low, double high)
@@ -165,7 +172,7 @@ double RGamma(double n,double lambda)
 {
   double aa;
   double w;
-  //  int i;
+  /*  int i; */
 
 	double x=0.0;
 	if(n<1)
@@ -282,29 +289,37 @@ return log(RGamma(n,lambda));
 
 
 
-//Melissa's version, adapted from an algorithm on wikipedia.  January 08
-double LogRGamma(double n, double lambda) {
+/* Melissa's version, adapted from an algorithm on wikipedia.  January 08 */
+double LogRGamma(double n, double lambda)
+{
   double v0, v[3], E=2.71828182, em, logem, lognm;
   int i;
-  if (lambda!=1.0) {printf("lambda=%e!\n", lambda); exit(-1);}
-  if (n >= 1.0) return log(RGamma(n, lambda));
+  if (lambda!=1.0) {
+    printf("lambda=%e!\n", lambda); exit(-1);
+  }
+  if (n >= 1.0) {
+    return log(RGamma(n, lambda));
+  }
   v0 = E/(E+n);
   while (1) {
-    for (i=0; i<3; i++) v[i] = rnd();
+    for (i=0; i<3; i++) {
+      v[i] = rnd();
+    }
+    
     if (v[0] <= v0) {
       logem = 1.0/n*log(v[1]);
       em = exp(logem);
       lognm = log(v[2])+(n-1)*logem;
-    }
-    else {
+    } else {
       em = 1.0-log(v[1]);
       logem = log(em);
       lognm = log(v[2]) - em;
     }
-    if (lognm <= (n-1)*logem - em)
+    if (lognm <= (n-1)*logem - em) {
       return logem - log(lambda);
+    }
   }
-  }
+}
 
 
 
@@ -344,28 +359,25 @@ LogRDirichlet (const double *a, const int k, double *b,double *c)
   int i;
   double sum = 0.0;
   double sum2;
-  for (i = 0; i < k; i++)
-    {
-      c[i] = LogRGamma (a[i], 1);
-      b[i]=exp(c[i]);
-      sum += b[i];
-    }
+  for (i = 0; i < k; i++) {
+    c[i] = LogRGamma (a[i], 1);
+    b[i]=exp(c[i]);
+    sum += b[i];
+  }
   
-    /* patch added May 2007 to set gene frequencies equal if all draws from the Gamma distribution are very low. Ensures that P and logP remain defined in this rare event */
-  if(sum<UNDERFLO){
-    for(i=0;i<k;i++){
+  /* patch added May 2007 to set gene frequencies equal if all draws from the Gamma distribution are very low. Ensures that P and logP remain defined in this rare event */
+  if(sum<UNDERFLO) {
+    for(i=0;i<k;i++) {
       b[i] = 1.0/(double)(k);
       c[i] = log(b[i]);
     }
-    }else{
+  } else {
     sum2=log(sum);
-    for (i = 0; i < k; i++)
-      {
-	c[i]-=sum2;
-	b[i]/=sum;
-      }
+    for (i = 0; i < k; i++) {
+      c[i]-=sum2;
+      b[i]/=sum;
     }
-  
+  }
 }
 
 
@@ -893,9 +905,9 @@ simple-minded approach, above.*/
 {
   double cum = 0.0;
   int up,down; 
-  //  double upvalue,downvalue;
+  /*  double upvalue,downvalue; */
   double rv;
-  //  double q = 1 - p;
+  /*  double q = 1 - p; */
 
   if (p<=0.0) return 0;  /*trivial cases*/
   if (p>=1.0) return 0;

@@ -50,14 +50,14 @@
 /*GLOBAL VARIABLES WHICH ARE SET IN THE mainparams AND extraparams FILES;
    SEE EXPLANATIONS THERE */
 
-struct IND
-  {				/*Non-genotype info for each individual */
-    char Label[LABELLEN];
-    int Population;
-    int PopFlag;
-    int Phenotype;
-    int Location, myloc;
-  };
+struct IND {				/*Non-genotype info for each individual */
+  char Label[LABELLEN];
+  int Population;
+  int PopFlag;
+  int Phenotype;
+  int Location;
+  int myloc;
+};
 
 /*when adding new parameters, need to make changes in 4 places: 
    (1) here, (2) extraparams, (3) SetValue (params.c), (4) PreSetValues
@@ -109,7 +109,7 @@ int LOCDATA, LOCISPOP;
 double LOCPRIORSTEP;
 int PRINTLOCPRIOR;
 
-//seed parameter, melissa added 1/8/08
+/* seed parameter, melissa added 1/8/08 */
 int SEED;
 
 /* options hidden by user but still used by program*/

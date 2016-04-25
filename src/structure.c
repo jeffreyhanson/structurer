@@ -38,6 +38,7 @@ Welcome (FILE * file)
   fprintf (file, "STRUCTURE by Pritchard, Stephens and Donnelly (2000)\n");
   fprintf (file, "     and Falush, Stephens and Pritchard (2003)\n");
   fprintf (file, "       Code by Pritchard, Falush and Hubisz\n");
+  fprintf (file, "       Modified for parallel runs \n");
   fprintf (file, "             Version %s\n", VERSION);
   fprintf (file, "----------------------------------------------------\n");
 

@@ -7,7 +7,7 @@ CC = gcc
 LIBS = -lm
 
 all: target
-	mv structure ../inst/bin/structure -rf
+	mv structure ../inst/bin/structure -f
 
 target: structure 
 

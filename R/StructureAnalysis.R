@@ -250,7 +250,7 @@ gelman.diag.StructureAnalysis <- function(x, ...) {
 			ll2[[i]] <- mcmc(ll[i,], start=curr.burnin+1, thin=x@opts@UPDATEFREQ)
 		}
 		# return object
-		return(coda::gelman.diag(mcmc.list(ll2)))
+		return(coda::gelman.diag(mcmc.list(ll2), autoburnin=FALSE))
 	}
 	# if only one then return NA object
 	warning('Gelman-Rubin statistics cannot be calculated for only a single Structure run')

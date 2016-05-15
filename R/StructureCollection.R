@@ -38,7 +38,7 @@ setClass(
 #'
 #' This function creates a new \code{StructureCollection} object.
 #'
-#' @param summary.data \code{data.frame}  summary of analyses.
+#' @param analyses \code{list} of \code{StructureCollection} objects run using different .
 #' @seealso \code{\link{StructureCollection-class}}, \code{\link{StructureData}}, \code{\link{StructureData}}, \code{\link{StructureResults}}.
 #' @details The delta-k values are calculated using the method used by Structure Harvestor \url{http://taylor0.biology.ucla.edu/structureHarvester/faq.html.}
 #' @export
@@ -147,9 +147,8 @@ sample.membership.StructureCollection <- function(x, threshold=NULL) {
 #' @export
 `sample.names<-.StructureCollection` <- function(x, value) {
 	return(
-		StructureCollection(
-			summary=x@summary,
-			best=x@best,
+		new("StructureCollection",
+			summary=x@summary, best=x@best,
 			analyses=lapply(x@anaylses, `sample.names<-.StructureAnalysis`, value=value)
 		)
 	)
@@ -167,10 +166,9 @@ loci.names.StructureCollection <- function(x) {
 #' @export
 `loci.names<-.StructureCollection` <- function(x, value) {
 	return(
-		StructureCollection(
-			summary=x@summary,
-			best=x@best,
-			analyses=lapply(x@anaylses, `loci.names<-.StructureAnalysis`, value=value)
+		new("StructureCollection",
+			summary=x@summary, best=x@best,
+			analyses=lapply(x@analyses, `loci.names<-.StructureAnalysis`, value=value)
 		)
 	)
 }

@@ -18,9 +18,11 @@ gelman.diag(x, ...)
 \arguments{
 \item{x}{\code{StructureCollection} or \code{StructureAnalysis} object.}
 
-\item{...}{arguments passed to \code{\link[code]{gelman.diag}}.}
+\item{...}{arguments passed to \code{\link[coda]{gelman.diag}}.}
+
+\item{K}{\code{numeric} indicating number of populations to report statistic for if \code{x} is a \code{StructureCollection} object.}
 }
 \description{
-This function returns the Gelman-Rubin diagnostic statistics for the negative loglikelihood of multiple Structure runs. See \code{\link[code]{gelman.dig}} for more information.
+This function returns the Gelman-Rubin diagnostic statistics for the negative loglikelihood of multiple Structure runs. See \code{\link[coda]{gelman.diag}} for more information.
 }
 

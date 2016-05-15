@@ -71,7 +71,9 @@ setClass(
 #' @param UPDATEFREQ \code{numeric} Frequency to store updates to loglikelihood for traceplots. Defaults to yield 1000 frequencies.
 #' @seealso \code{\link{StructureOpts-class}}.
 #' @examples 
-#' StructureOpts(MAXPOPS=2, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, SEED=NA_real_, UPDATEFREQ=100)
+#' StructureOpts(NUMRUNS=2, MAXPOPS=2, BURNIN=10000,
+#'   NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, 
+#'   SEED=1:2, UPDATEFREQ=100)
 #' @export
 StructureOpts<-function(NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, SEED=sample.int(1e5,NUMRUNS), UPDATEFREQ=max(floor(BURNIN+NUMREPS)/1000,1)) {
 	x<-new("StructureOpts", NUMRUNS=NUMRUNS, MAXPOPS=MAXPOPS, BURNIN=BURNIN, NUMREPS=NUMREPS, NOADMIX=NOADMIX, ADMBURNIN=ADMBURNIN, SEED=SEED, UPDATEFREQ=UPDATEFREQ)

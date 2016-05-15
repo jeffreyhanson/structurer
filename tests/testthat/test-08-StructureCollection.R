@@ -14,8 +14,8 @@ test_that('run.Structure', {
 	summary(sc)
 	loglik.plot(sc)
 	delta.k.plot(sc)
-	traceplot(sc)
-	gelman.diag(sc)
+	traceplot(sc, K=1)
+	gelman.diag(sc, K=1)
 })
 
  

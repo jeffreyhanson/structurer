@@ -198,6 +198,7 @@ print.StructureAnalysis=function(x, ..., header=TRUE) {
 	print(x@data, header=FALSE)
 	cat('Results','\n')
 	print(x@results, header=FALSE)
+	cat('  Gelman-Ruben R:', gelman.diag(x)$psrf[[1]], '\n')
 }
 
 #' @rdname show
@@ -213,19 +214,24 @@ setMethod(
 #' @method traceplot StructureAnalysis
 #' @export
 traceplot.StructureAnalysis <- function(x, ...) {
+	# create fake vars to avoid CRAN notes
+	iteration <- NULL
+	chain <- NULL
 	# extract logliks
 	ll <- data.frame(iteration=x@results@replicates[[1]]@mcmc$Rep)
 	ll <- cbind(ll, data.frame(sapply(x@results@replicates, function(y) {y@mcmc$Ln.Like})))
 	ll <- ll[rowSums(ll)<0,]
+	if (ncol(ll)==2) names(ll)[2] <- 'X1'
 	ll <- gather(ll, chain, loglik, -iteration)
 	ll$chain <- as.factor(as.numeric(gsub('X', '', ll$chain, fixed=TRUE)))
 	# make plot
 	ggplot(data=ll, aes(x=iteration, y=loglik, color=chain)) +
 		coord_cartesian(xlim=range(ll$iteration), ylim=range(ll$loglik)) +
-		geom_rect(xmin=-10, xmax=(x@opts@BURNIN+x@opts@ADMBURNIN),
-			ymin=max(ll$loglik)+10, ymax=10,
-			color='black', fill='black') +
-		geom_line() + xlab('Iteration') + ylab('Negative loglikelihood')
+		geom_rect(xmin=-10, xmax=x@opts@BURNIN,
+			ymin=min(ll$loglik)*1.5, ymax=max(ll$loglik)*0.5,
+			color='grey80', fill='grey80') +
+		geom_line() + xlab('Iteration') + ylab('Negative loglikelihood') +
+		theme_classic() + theme(axis.line.x=element_line(), axis.line.y=element_line())
 }
 
 #' @rdname gelman.diag
@@ -233,16 +239,17 @@ traceplot.StructureAnalysis <- function(x, ...) {
 #' @export
 gelman.diag.StructureAnalysis <- function(x, ...) {
 	# if only one replicate then cannot calculate diagnostics
-	if (length(x@results@replicates>1)) {
+	if (length(x@results@replicates)>1) {
 		# extract -logliks
 		ll <- sapply(x@results@replicates, function(y) {y@mcmc$Ln.Like})
 		ll <- ll[rowSums(ll)<0,]
 		ll2 <- list()
-		for (i in seq_len(ncol(ll))) ll2[[i]] <- mcmc(ll[i,], thin=x@opts@UPDATEFREQ)
+		for (i in seq_len(ncol(ll))) ll2[[i]] <- mcmc(ll[i,], start=x@opts@BURNIN+1, thin=x@opts@UPDATEFREQ)
 		# return object
 		return(coda::gelman.diag(mcmc.list(ll2)))
 	}
 	# if only one then return NA object
+	warning('Gelman-Rubin statistics cannot be calculated for only a single Structure run')
 	return(structure(list(psrf = structure(c(NA_real_, NA_real_), .Dim = 1:2, .Dimnames = list(NULL, c("Point est.", "Upper C.I."))),
 		mpsrf = NULL), .Names = c("psrf", "mpsrf"), class = "gelman.diag"))	
 }

@@ -28,10 +28,12 @@ setClass(
 #' This function creates a new \code{StructureResults} object.
 #'
 #' @param replicates \code{list} of \code{StructureReplicate} objects.
+#' @param opts \code{ClumppOpts} object to post-process Structure runs.
+#' @param dir \code{character} location to run CLUMPP post-processing.
 #' @seealso \code{\link{StructureReplicate-class}}.
 #' @return \code{\link{StructureReplicate}}.
 #' @export
-StructureResults<-function(replicates, opts=ClumpOpts(), dir=tempdir()) {
+StructureResults<-function(replicates, opts=ClumppOpts(), dir=tempdir()) {
 	### clumpp analysis to combine replicates
 	# sink replicates to file
 	if (length(replicates)>1 & n.pop(replicates[[1]])>1) {

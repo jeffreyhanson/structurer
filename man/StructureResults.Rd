@@ -4,10 +4,14 @@
 \alias{StructureResults}
 \title{Create StructureResults object}
 \usage{
-StructureResults(replicates, opts = ClumpOpts(), dir = tempdir())
+StructureResults(replicates, opts = ClumppOpts(), dir = tempdir())
 }
 \arguments{
 \item{replicates}{\code{list} of \code{StructureReplicate} objects.}
+
+\item{opts}{\code{ClumppOpts} object to post-process Structure runs.}
+
+\item{dir}{\code{character} location to run CLUMPP post-processing.}
 }
 \value{
 \code{\link{StructureReplicate}}.

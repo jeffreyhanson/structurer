@@ -29,7 +29,9 @@ StructureOpts(NUMRUNS = 2, MAXPOPS = 2, BURNIN = 10000, NUMREPS = 20000,
 This function creates a new \code{StructureOpts} object.
 }
 \examples{
-StructureOpts(MAXPOPS=2, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, SEED=NA_real_, UPDATEFREQ=100)
+StructureOpts(NUMRUNS=2, MAXPOPS=2, BURNIN=10000,
+  NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, 
+  SEED=1:2, UPDATEFREQ=100)
 }
 \seealso{
 \code{\link{StructureOpts-class}}.

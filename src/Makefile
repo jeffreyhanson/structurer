@@ -1,4 +1,4 @@
-OPT = -O3
+OPT = -O3 -march=native
 #OPT = -O3 -m64 -static
 #OPT = -Wall -g 
 
@@ -7,7 +7,7 @@ CC = gcc
 LIBS = -lm
 
 all: target
-	mv structure ../inst/bin/structure -f
+	cp structure ../inst/bin/structure -f
 
 target: structure 
 

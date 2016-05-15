@@ -31,6 +31,9 @@
 #' @importFrom ggplot2 geom_rect
 #' @importFrom ggplot2 aes
 #' @importFrom ggplot2 coord_cartesian
+#' @importFrom ggplot2 theme
+#' @importFrom ggplot2 theme_classic
+#' @importFrom ggplot2 element_line
 
 #' @importFrom testthat test_that
 #' @importFrom testthat expect_true

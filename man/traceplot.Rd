@@ -16,6 +16,8 @@ traceplot(x, ...)
 \item{x}{\code{StructureCollection} or \code{StructureAnalysis} object.}
 
 \item{...}{not used.}
+
+\item{K}{\code{numeric} indicating number of populations to make traceplot for if \code{x} is a \code{StructureCollection} object.}
 }
 \description{
 This function plots a traceplot showing the negative log-likelihood values in a \code{StructureCollection} object.

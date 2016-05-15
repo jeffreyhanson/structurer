@@ -10,6 +10,7 @@ NULL
 #' @slot alpha \code{numeric} mean value of alpha.
 #' @slot matrix \code{matrix} population membership probabilities. Each row is an individual. Each column is for a different population.
 #' @slot sample.names \code{character} name of samples.
+#' @slot output \code{character} output file.
 #' @slot log \code{character} log file.
 #' @slot mcmc \code{data.frame} MCMC updates during run.
 #' @seealso \code{\link{StructureReplicate}}.
@@ -22,6 +23,7 @@ setClass(
 		alpha='numeric',
 		matrix='matrix',
 		sample.names='character',
+		output='character',
 		log='character',
 		mcmc='data.frame'
 	),
@@ -33,7 +35,7 @@ setClass(
 			}
 		)
 		# check dimensions of matrix match log file
-		pars <- gsub(' ', '', gsub(',', '', strsplit(grep('NUMINDS', object@log, value=TRUE),'\t')[[1]], fixed=TRUE))
+		pars <- gsub(' ', '', gsub(',', '', strsplit(grep('NUMINDS', object@output, value=TRUE),'\t')[[1]], fixed=TRUE))
 		n.inds <- as.numeric(gsub('NUMINDS=', '', grep('NUMINDS', pars, fixed=TRUE, value=TRUE), fixed=TRUE))
 		n.pop <- as.numeric(gsub('MAXPOPS=', '', grep('MAXPOPS', pars, fixed=TRUE, value=TRUE), fixed=TRUE))
 		expect_equal(ncol(object@matrix), n.pop)
@@ -52,13 +54,14 @@ setClass(
 #' @param alpha \code{numeric} mean value of alpha.
 #' @param matrix \code{matrix} population membership probabilities. Each row is an individual. Each column is for a different population.
 #' @param sample.names \code{character} name of samples.
+#' @param output \code{character} output file.
 #' @param log \code{character} log file.
 #' @param mcmc \code{data.frame} MCMC updates during run.
 #' @seealso \code{\link{StructureReplicate-class}}.
 #' @return \code{\link{StructureReplicate}}.
 #' @export
-StructureReplicate<-function(loglik, var_loglik, alpha, matrix, sample.names, log, mcmc) {
-	x<-new("StructureReplicate", loglik=loglik, var_loglik=var_loglik, alpha=alpha, matrix=matrix, sample.names=sample.names, log=log, mcmc=mcmc)
+StructureReplicate<-function(loglik, var_loglik, alpha, matrix, sample.names, output, log, mcmc) {
+	x<-new("StructureReplicate", loglik=loglik, var_loglik=var_loglik, alpha=alpha, matrix=matrix, sample.names=sample.names, output=output, log=log, mcmc=mcmc)
 	validObject(x, test=FALSE)
 	return(x)
 }
@@ -122,11 +125,13 @@ read.StructureReplicate <- function(file, runfile) {
 	mcmc.matrix <- runfile[seq(grep('Rep#', runfile, fixed=TRUE)[1], grep('MCMC completed', runfile, fixed=TRUE)[1])]
 	mcmc.matrix <- mcmc.matrix[!grepl('Alpha',mcmc.matrix,fixed=TRUE)]
 	mcmc.matrix <- mcmc.matrix[!grepl('BURNIN',mcmc.matrix,fixed=TRUE)]
+	mcmc.matrix <- mcmc.matrix[!grepl('Burnin',mcmc.matrix,fixed=TRUE)]
 	mcmc.matrix <- mcmc.matrix[!grepl('completed',mcmc.matrix,fixed=TRUE)]
+	mcmc.matrix <- mcmc.matrix[!grepl('Rep',mcmc.matrix,fixed=TRUE)]
 	mcmc.matrix <- mcmc.matrix[which(nchar(mcmc.matrix)>0)]
 	mcmc.matrix <- gsub(':', ' ', mcmc.matrix, fixed=TRUE)
-	mcmc.matrix <- as.matrix(fread(paste(mcmc.matrix, collapse='\n'), sep=' ', header=FALSE))
-	colnames(mcmc.matrix) <- c('Rep','Alpha', paste0('F', seq_len(ncol(mcmc.matrix)-4)), 'Ln.Like', 'Est.Ln.P.D')
+	mcmc.matrix <- fread(paste(mcmc.matrix, collapse='\n'), sep=' ', header=FALSE, data.table=FALSE)
+	names(mcmc.matrix) <- c('Rep','Alpha', paste0('F', seq_len(ncol(mcmc.matrix)-4)), 'Ln.Like', 'Est.Ln.P.D')
 	# return object
 	StructureReplicate(
 		loglik=as.numeric(gsub('Mean value of ln likelihood = ', '', grep('Mean value of ln likelihood', outputfile, fixed=TRUE, value=TRUE), fixed=TRUE)),
@@ -134,8 +139,9 @@ read.StructureReplicate <- function(file, runfile) {
 		alpha=alpha,
 		matrix=as.matrix(mat[,c(-1, -2, -3, -4),drop=FALSE]),
 		sample.names=as.character(mat[[2]]),
-		log=outputfile,
-		mcmc=data.frame(mcmc.matrix)
+		output=outputfile,
+		log=runfile,
+		mcmc=mcmc.matrix
 	)
 }
 

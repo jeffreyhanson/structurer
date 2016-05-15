@@ -224,10 +224,11 @@ traceplot.StructureAnalysis <- function(x, ...) {
 	if (ncol(ll)==2) names(ll)[2] <- 'X1'
 	ll <- gather(ll, chain, loglik, -iteration)
 	ll$chain <- as.factor(as.numeric(gsub('X', '', ll$chain, fixed=TRUE)))
+	curr.burnin <- ifelse(sum(grepl('Admixture Burnin complete', x@results@replicates[[1]]@log, fixed=TRUE))>0, x@opts@ADMBURNIN, 0)+x@opts@BURNIN
 	# make plot
 	ggplot(data=ll, aes(x=iteration, y=loglik, color=chain)) +
 		coord_cartesian(xlim=range(ll$iteration), ylim=range(ll$loglik)) +
-		geom_rect(xmin=-10, xmax=x@opts@BURNIN,
+		geom_rect(xmin=-10, xmax=curr.burnin,
 			ymin=min(ll$loglik)*1.5, ymax=max(ll$loglik)*0.5,
 			color='grey80', fill='grey80') +
 		geom_line() + xlab('Iteration') + ylab('Negative loglikelihood') +
@@ -244,7 +245,10 @@ gelman.diag.StructureAnalysis <- function(x, ...) {
 		ll <- sapply(x@results@replicates, function(y) {y@mcmc$Ln.Like})
 		ll <- ll[rowSums(ll)<0,]
 		ll2 <- list()
-		for (i in seq_len(ncol(ll))) ll2[[i]] <- mcmc(ll[i,], start=x@opts@BURNIN+1, thin=x@opts@UPDATEFREQ)
+		for (i in seq_len(ncol(ll))) {
+			curr.burnin <- ifelse(sum(grepl('Admixture Burnin complete', x@results@replicates[[i]]@log, fixed=TRUE))>0, x@opts@ADMBURNIN, 0)+x@opts@BURNIN
+			ll2[[i]] <- mcmc(ll[i,], start=curr.burnin+1, thin=x@opts@UPDATEFREQ)
+		}
 		# return object
 		return(coda::gelman.diag(mcmc.list(ll2)))
 	}

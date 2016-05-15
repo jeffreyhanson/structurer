@@ -4,7 +4,8 @@
 \alias{StructureReplicate}
 \title{Create StructureReplicate object}
 \usage{
-StructureReplicate(loglik, var_loglik, alpha, matrix, sample.names, log, mcmc)
+StructureReplicate(loglik, var_loglik, alpha, matrix, sample.names, output, log,
+  mcmc)
 }
 \arguments{
 \item{loglik}{\code{numeric} mean negative loglikelihood of model.}
@@ -16,6 +17,8 @@ StructureReplicate(loglik, var_loglik, alpha, matrix, sample.names, log, mcmc)
 \item{matrix}{\code{matrix} population membership probabilities. Each row is an individual. Each column is for a different population.}
 
 \item{sample.names}{\code{character} name of samples.}
+
+\item{output}{\code{character} output file.}
 
 \item{log}{\code{character} log file.}
 

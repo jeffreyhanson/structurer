@@ -1,4 +1,7 @@
-# structurer 1.0.1
+# structurer 1.1.1
+* fixed bugs relating to ADMBURNIN in traceplots and R statistics
+
+# structurer 1.1.0
 
 * Added functionality to check convergence of Structure runs
 + added methods to make traceplots of MCMC runs

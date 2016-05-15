@@ -1,3 +1,5 @@
+context('StructureCollection')
+
 test_that('run.Structure', {
 	# make Structure object
 	sd <- read.StructureData(system.file('extdata', 'example_fstat_aflp.dat', package='structurer'))
@@ -12,6 +14,8 @@ test_that('run.Structure', {
 	summary(sc)
 	loglik.plot(sc)
 	delta.k.plot(sc)
+	traceplot(sc)
+	gelman.diag(sc)
 })
 
  

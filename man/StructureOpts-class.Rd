@@ -23,6 +23,8 @@ This class stores input parameters for the Structure program.
 \item{\code{ADMBURNIN}}{\code{numeric} Initial period of burnin with admixture model. Defaults to 500.}
 
 \item{\code{SEED}}{\code{numeric} Seed for random number generator. Defaults to NA so a random seed is used.}
+
+\item{\code{UPDATEFREQ}}{\code{numeric} Frequency to store updates to loglikelihood for traceplots. Defaults to 200.}
 }}
 \seealso{
 \code{\link{StructureOpts}}.

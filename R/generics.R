@@ -131,3 +131,30 @@ loglik.plot <- function(x, main) UseMethod('loglik.plot')
 #' @param main \code{character} plot title.
 #' @seealso \code{\link{StructureCollection}}.
 delta.k.plot <- function(x, main) UseMethod('delta.k.plot')
+
+
+#' Traceplot
+#'
+#' This function plots a traceplot showing the negative log-likelihood values in a \code{StructureCollection} object.
+#' 
+#' @param x \code{StructureCollection} or \code{StructureAnalysis} object.
+#' @param ... not used.
+#' @seealso \code{\link{StructureCollection}}.
+traceplot <- function(x, ...) UseMethod('traceplot')
+
+#' Gelman-Rubin diagnostic statistics
+#'
+#' This function returns the Gelman-Rubin diagnostic statistics for the negative loglikelihood of multiple Structure runs. See \code{\link[code]{gelman.dig}} for more information.
+#' @param x \code{StructureCollection} or \code{StructureAnalysis} object.
+#' @param ... arguments passed to \code{\link[code]{gelman.diag}}.
+#' @name gelman.diag
+gelman.diag <- function(x, ...) UseMethod('gelman.diag')
+
+
+#' @method gelman.diag default
+#' @rdname gelman.diag
+#' @export
+gelman.diag.default <- function(x, ...) {
+	coda::gelman.diag(x, ...)
+}
+

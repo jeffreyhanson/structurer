@@ -1,6 +1,8 @@
-test_that('StructureOpts', {
+context('ClumppOpts')
+
+test_that('ClumppOpts', {
 	# tests implicit
-	x <- StructureOpts(MAXPOPS=2, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, SEED=1:2)
+	x <- ClumppOpts(M='Greedy', W=TRUE, S=FALSE, REPEATS=1000)
 	# methods
 	print(x)
 	x

@@ -131,12 +131,12 @@ sample.membership.StructureAnalysis <- function(x, threshold=NULL) {
 #' x <- run.single.Structure(dat, NUMRUNS=1, MAXPOPS=2, BURNIN=10,
 #'	NUMREPS=10, NOADMIX=FALSE, ADMBURNIN=10)
 #' @export
-run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, SEED=sample.int(1e5,NUMRUNS),
-	M='Greedy', W=TRUE, S=FALSE, REPEATS=1000, dir=tempdir(), clean=TRUE, verbose=FALSE, threads=1)
+run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, SEED=sample.int(1e5,NUMRUNS), 
+	UPDATEFREQ=max(floor(BURNIN+NUMREPS)/1000,1), M='Greedy', W=TRUE, S=FALSE, REPEATS=1000, dir=tempdir(), clean=TRUE, verbose=FALSE, threads=1)
 {
 	## initialization
 	# argument checks
-	opts <- StructureOpts(NUMRUNS=NUMRUNS, MAXPOPS=MAXPOPS, BURNIN=BURNIN, NUMREPS=NUMREPS, NOADMIX=NOADMIX, ADMBURNIN=ADMBURNIN, SEED=SEED)
+	opts <- StructureOpts(NUMRUNS=NUMRUNS, MAXPOPS=MAXPOPS, BURNIN=BURNIN, NUMREPS=NUMREPS, NOADMIX=NOADMIX, ADMBURNIN=ADMBURNIN, SEED=SEED, UPDATEFREQ=UPDATEFREQ)
 	opts2 <- ClumppOpts(M=M, W=W, S=S, REPEATS=REPEATS)
 	expect_is(x, 'StructureData')
 	# identify structure path
@@ -148,10 +148,12 @@ run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20
 	write.StructureOpts(opts,dir)
 	write.StructureData(x,file.path(dir, 'data.txt'))
 	# setup cluster
-	clust <- makeCluster(threads,type='PSOCK')
-	clusterEvalQ(clust, {library(structurer)})
-	clusterExport(clust, c('structure.path','dir','MAXPOPS','x', 'verbose'), envir=environment())
-	registerDoParallel(clust)
+	if (threads>1) {
+		clust <- makeCluster(threads,type='PSOCK')
+		clusterEvalQ(clust, {library(structurer)})
+		clusterExport(clust, c('structure.path','dir','MAXPOPS','x', 'verbose'), envir=environment())
+		registerDoParallel(clust)
+	}
 	# run BayeScan
 	ret <- StructureAnalysis(
 			results=StructureResults(
@@ -164,9 +166,9 @@ run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20
 						if (file.exists('seed.txt')) unlink('seed.txt')
 						if (file.exists(file.path(dir,'seed.txt'))) unlink(file.path(dir,'seed.txt'))
 						# read results
-						return(read.StructureReplicate(paste0(dir, '/output_run_',i,'.txt_f')))
+						return(read.StructureReplicate(paste0(dir, '/output_run_',i,'.txt_f'), paste0(dir, '/structure_run_',i,'_log.txt')))
 					},
-					.parallel=TRUE
+					.parallel=(threads>1)
 				),
 				opts2,
 				dir=dir
@@ -175,7 +177,9 @@ run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20
 			opts=opts
 		)
 	# kill cluster
-	clust <- stopCluster(clust)
+	if (threads>1) {
+		clust <- stopCluster(clust)
+	}
 	# if clean then delete files
 	if (clean) unlink(dir)
 	# return results
@@ -205,3 +209,40 @@ setMethod(
 		print.StructureAnalysis(object)
 )
 
+#' @rdname traceplot
+#' @method traceplot StructureAnalysis
+#' @export
+traceplot.StructureAnalysis <- function(x, ...) {
+	# extract logliks
+	ll <- data.frame(iteration=x@results@replicates[[1]]@mcmc$Rep)
+	ll <- cbind(ll, data.frame(sapply(x@results@replicates, function(y) {y@mcmc$Ln.Like})))
+	ll <- ll[rowSums(ll)<0,]
+	ll <- gather(ll, chain, loglik, -iteration)
+	ll$chain <- as.factor(as.numeric(gsub('X', '', ll$chain, fixed=TRUE)))
+	# make plot
+	ggplot(data=ll, aes(x=iteration, y=loglik, color=chain)) +
+		coord_cartesian(xlim=range(ll$iteration), ylim=range(ll$loglik)) +
+		geom_rect(xmin=-10, xmax=(x@opts@BURNIN+x@opts@ADMBURNIN),
+			ymin=max(ll$loglik)+10, ymax=10,
+			color='black', fill='black') +
+		geom_line() + xlab('Iteration') + ylab('Negative loglikelihood')
+}
+
+#' @rdname gelman.diag
+#' @method gelman.diag StructureAnalysis
+#' @export
+gelman.diag.StructureAnalysis <- function(x, ...) {
+	# if only one replicate then cannot calculate diagnostics
+	if (length(x@results@replicates>1)) {
+		# extract -logliks
+		ll <- sapply(x@results@replicates, function(y) {y@mcmc$Ln.Like})
+		ll <- ll[rowSums(ll)<0,]
+		ll2 <- list()
+		for (i in seq_len(ncol(ll))) ll2[[i]] <- mcmc(ll[i,], thin=x@opts@UPDATEFREQ)
+		# return object
+		return(coda::gelman.diag(mcmc.list(ll2)))
+	}
+	# if only one then return NA object
+	return(structure(list(psrf = structure(c(NA_real_, NA_real_), .Dim = 1:2, .Dimnames = list(NULL, c("Point est.", "Upper C.I."))),
+		mpsrf = NULL), .Names = c("psrf", "mpsrf"), class = "gelman.diag"))	
+}

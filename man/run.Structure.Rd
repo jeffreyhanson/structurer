@@ -5,9 +5,10 @@
 \title{Run Structure anaylsis}
 \usage{
 run.Structure(x, NUMRUNS = 2, MAXPOPS = 1:10, BURNIN = 10000,
-  NUMREPS = 20000, NOADMIX = FALSE, ADMBURNIN = 500, SEED = NA_real_,
-  M = "Greedy", W = TRUE, S = FALSE, REPEATS = 1000, dir = tempdir(),
-  clean = TRUE, verbose = FALSE, threads = 1)
+  NUMREPS = 20000, NOADMIX = FALSE, ADMBURNIN = 500,
+  UPDATEFREQ = max(floor(BURNIN + NUMREPS)/1000, 1), M = "Greedy",
+  W = TRUE, S = FALSE, REPEATS = 1000, dir = tempdir(), clean = TRUE,
+  verbose = FALSE, threads = 1)
 }
 \arguments{
 \item{x}{\code{StructureData} object.}
@@ -24,7 +25,7 @@ run.Structure(x, NUMRUNS = 2, MAXPOPS = 1:10, BURNIN = 10000,
 
 \item{ADMBURNIN}{\code{numeric} Initial period of burnin with admixture model. Defaults to 500.}
 
-\item{SEED}{\code{numeric} Seed for random number generator. Defaults to NA so a random seed is used.}
+\item{UPDATEFREQ}{\code{numeric} Frequency to store updates to loglikelihood for traceplots. Defaults to yield 1000 frequencies.}
 
 \item{M}{\code{character} name of search method. Valid arguments are 'FullSearch', 'Greedy', or 'LargeKGreedy'. Defaults to 'Greedy'.}
 

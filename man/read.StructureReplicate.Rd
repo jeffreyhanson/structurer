@@ -4,10 +4,12 @@
 \alias{read.StructureReplicate}
 \title{Read Structure run}
 \usage{
-read.StructureReplicate(file)
+read.StructureReplicate(file, runfile)
 }
 \arguments{
 \item{file}{\code{character} file path of output file.}
+
+\item{runfile}{\code{character} file path of file text printed to console during run.}
 }
 \value{
 \code{\link{StructureReplicate}}.

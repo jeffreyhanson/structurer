@@ -4,7 +4,7 @@
 \alias{StructureReplicate}
 \title{Create StructureReplicate object}
 \usage{
-StructureReplicate(loglik, var_loglik, alpha, matrix, sample.names, log)
+StructureReplicate(loglik, var_loglik, alpha, matrix, sample.names, log, mcmc)
 }
 \arguments{
 \item{loglik}{\code{numeric} mean negative loglikelihood of model.}
@@ -18,6 +18,8 @@ StructureReplicate(loglik, var_loglik, alpha, matrix, sample.names, log)
 \item{sample.names}{\code{character} name of samples.}
 
 \item{log}{\code{character} log file.}
+
+\item{mcmc}{\code{data.frame} MCMC updates during run.}
 }
 \value{
 \code{\link{StructureReplicate}}.

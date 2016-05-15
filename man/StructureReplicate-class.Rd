@@ -21,6 +21,8 @@ This class stores results from the Structure program.
 \item{\code{sample.names}}{\code{character} name of samples.}
 
 \item{\code{log}}{\code{character} log file.}
+
+\item{\code{mcmc}}{\code{data.frame} MCMC updates during run.}
 }}
 \seealso{
 \code{\link{StructureReplicate}}.

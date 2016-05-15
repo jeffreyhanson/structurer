@@ -1,3 +1,5 @@
+context('StructureData')
+
 test_that('StructureData', {
 	# simualate data
 	locinames <- letters[1:5]

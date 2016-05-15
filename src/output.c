@@ -170,22 +170,32 @@ PrintUpdate (int rep, int *Geno, int *PreGeno, double *Alpha, double *Fst, doubl
     }
   }
 
+  
+	printf ("here -1");
+  
   /*calculate some stuff */
-
   if (LINKAGE) {
+			printf ("here 0");
+		
     if (rep <= ADMBURNIN) {
+			printf ("here 1");
       like = CalcLike (Geno, PreGeno, Q, P, Recessive, NULL, NULL); 
     } else {
+			printf ("here 2");
       like = recomblikelihood;
     }
 
     if (rep >= BURNIN + 2) { /* +2 because need 2 observations for variance*/
+			printf ("here 3");
       logprob = EstLogProb (sumlikes, sumsqlikes, rep - BURNIN);
     } else if (COMPUTEPROB) { /*not linkage model*/
       if (rep <= BURNIN + 2) {
+				printf ("here 4");
         like = CalcLike (Geno, PreGeno, Q, P, Recessive, NULL, NULL);
       } else {
+				printf ("here 5");
         logprob = EstLogProb (sumlikes, sumsqlikes, rep - BURNIN);
+				printf ("here 6");
       }
     }
   }
@@ -260,24 +270,31 @@ PrintUpdate (int rep, int *Geno, int *PreGeno, double *Alpha, double *Fst, doubl
     PrintNET (stdout, P, NumAlleles, 1, 0);
   }
   
+  
+	/* Hanson J. O. edits to print loglikelihood during burnin */
+	/* original code here */
+	/*
   if (COMPUTEPROB) {
-
-
-    /*put correct # of spaces in */
-    /*if (((int) log10(like)) < 1) printalign = 4;
-      else printalign = 4 + ((int) log10(like));
-      for (i=printalign; i<8; i++)
-      printf(" "); */
-    if (rep > BURNIN + 2) {
+		if (rep > BURNIN + 2) {
       printf ("  %.0f  ", like);
       printf ("  %.0f ", logprob);
     } else {
       printf ("  --  ");
     }
   }
+	*/
 
+	double like2=like; /* create new like2 variable in case like is used elsewhere */
+	if (rep < (BURNIN+2)) {
+		like2=CalcLike (Geno, PreGeno, Q, P, Recessive, NULL, NULL);
+	} else {
+		like2=like;
+	}
+	printf ("  %.0f  ", like2);
+	printf ("  %.0f ", logprob);
   printf ("\n");
-
+	/* end edits */
+	
   if (rep == BURNIN) {
     printf ("\nBURNIN completed");
     PrintBanner (rep, Alpha, Fst, like, lambda);

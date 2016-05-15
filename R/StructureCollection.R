@@ -89,7 +89,7 @@ StructureCollection<-function(analyses) {
 #' x <- run.Structure(dat, NUMRUNS=2, MAXPOPS=1:3, BURNIN=10, NUMREPS=10, NOADMIX=FALSE, ADMBURNIN=10)
 #' print(x)
 #' @export
-run.Structure<-function(x, NUMRUNS=2, MAXPOPS=1:10, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500,
+run.Structure<-function(x, NUMRUNS=2, MAXPOPS=1:10, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, UPDATEFREQ=max(floor(BURNIN+NUMREPS)/1000,1),
 	M='Greedy', W=TRUE, S=FALSE, REPEATS=1000, dir=tempdir(), clean=TRUE, verbose=FALSE, threads=1)
 {
 	test_that('argument to MAXPOPS have at least 3 elements', expect_true(length(MAXPOPS) >= 3))
@@ -100,7 +100,7 @@ run.Structure<-function(x, NUMRUNS=2, MAXPOPS=1:10, BURNIN=10000, NUMREPS=20000,
 				if (verbose) cat('starting MAXPOPS: ',n,'\n')
 				curr.dir <- paste0(dir,'/k',n)
 				dir.create(curr.dir)
-				run.single.Structure(x, NUMRUNS=NUMRUNS, MAXPOPS=n, BURNIN=BURNIN, NUMREPS=NUMREPS, NOADMIX=NOADMIX, ADMBURNIN=ADMBURNIN,
+				run.single.Structure(x, NUMRUNS=NUMRUNS, MAXPOPS=n, BURNIN=BURNIN, NUMREPS=NUMREPS, NOADMIX=NOADMIX, ADMBURNIN=ADMBURNIN, UPDATEFREQ=UPDATEFREQ,
 					M=M, W=W, S=S, REPEATS=REPEATS, dir=curr.dir, clean=clean, verbose=verbose, threads=1)
 			})
 		)
@@ -234,5 +234,19 @@ delta.k.plot.StructureCollection <- function(x, main='Delta-K plot') {
 		xlab('Number of populations') +
 		ylab('Relative support (delta-K)') +
 		ggtitle(main)
+}
+
+#' @rdname traceplot
+#' @method traceplot StructureCollection
+#' @export
+traceplot.StructureCollection <- function(x, K=x@best, ...) {
+	traceplot.StructureAnalysis(x@analyses[[x@best]])
+}
+
+#' @rdname gelman.diag
+#' @method gelman.diag StructureCollection
+#' @export
+gelman.diag.StructureCollection <- function(x, K=x@best, ...) {
+	gelman.diag.StructureAnalysis(x@analyses[[x@best]])
 }
 

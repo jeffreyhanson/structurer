@@ -16,7 +16,9 @@ Imports:
     parallel,
     doParallel,
     ggplot2,
-    plyr
+    plyr,
+    coda,
+    tidyr
 Depends:
     R(>= 3.1.0)
 LazyData: true

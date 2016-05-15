@@ -12,6 +12,7 @@ NULL
 #' @slot NOADMIX \code{logical} Do not use admixture model. Defaults to \code{FALSE}.
 #' @slot ADMBURNIN \code{numeric} Initial period of burnin with admixture model. Defaults to 500.
 #' @slot SEED \code{numeric} Seed for random number generator. Defaults to NA so a random seed is used.
+#' @slot UPDATEFREQ \code{numeric} Frequency to store updates to loglikelihood for traceplots. Defaults to 200.
 #' @seealso \code{\link{StructureOpts}}.
 #' @export
 setClass(
@@ -23,7 +24,8 @@ setClass(
 		NUMREPS="numeric",
 		NOADMIX="logical",
 		ADMBURNIN="numeric",
-		SEED="numeric"
+		SEED="numeric",
+		UPDATEFREQ="numeric"
 	),
 	prototype=list(
 		NUMRUNS=2,
@@ -32,12 +34,13 @@ setClass(
 		NUMREPS=20000,
 		NOADMIX=FALSE,
 		ADMBURNIN=5000,
-		SEED=NA_real_
+		SEED=NA_real_,
+		UPDATEFREQ=200
 	),
 	validity=function(object) {
 		# check that parameters are greater than zero and not NA
 		sapply(
-			c('MAXPOPS','BURNIN', 'NUMREPS', 'ADMBURNIN', 'NUMRUNS'),
+			c('MAXPOPS','BURNIN', 'NUMREPS', 'NUMRUNS'),
 			function(x) {
 				expect_true(is.finite(slot(object, x)))
 				expect_true(slot(object, x)>0)
@@ -65,12 +68,13 @@ setClass(
 #' @param NOADMIX \code{logical} Do not use admixture model. Defaults to \code{FALSE}.
 #' @param ADMBURNIN \code{numeric} Initial period of burnin with admixture model. Defaults to 500.
 #' @param SEED \code{numeric} Seed for random number generator. Defaults to NA so a random seed is used.
+#' @param UPDATEFREQ \code{numeric} Frequency to store updates to loglikelihood for traceplots. Defaults to yield 1000 frequencies.
 #' @seealso \code{\link{StructureOpts-class}}.
 #' @examples 
-#' StructureOpts(MAXPOPS=2, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, SEED=NA_real_)
+#' StructureOpts(MAXPOPS=2, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, SEED=NA_real_, UPDATEFREQ=100)
 #' @export
-StructureOpts<-function(NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, SEED=sample.int(1e5,NUMRUNS)) {
-	x<-new("StructureOpts", NUMRUNS=NUMRUNS, MAXPOPS=MAXPOPS, BURNIN=BURNIN, NUMREPS=NUMREPS, NOADMIX=NOADMIX, ADMBURNIN=ADMBURNIN, SEED=SEED)
+StructureOpts<-function(NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, SEED=sample.int(1e5,NUMRUNS), UPDATEFREQ=max(floor(BURNIN+NUMREPS)/1000,1)) {
+	x<-new("StructureOpts", NUMRUNS=NUMRUNS, MAXPOPS=MAXPOPS, BURNIN=BURNIN, NUMREPS=NUMREPS, NOADMIX=NOADMIX, ADMBURNIN=ADMBURNIN, SEED=SEED, UPDATEFREQ=UPDATEFREQ)
 	validObject(x, test=FALSE)
 	return(x)
 }
@@ -87,6 +91,7 @@ print.StructureOpts=function(x, ..., header=TRUE) {
 	cat('  NUMREPS:',x@NUMREPS,'\n')
 	cat('  NOADMIX:',x@NOADMIX,'\n')
 	cat('  ADMBURNIN:',x@ADMBURNIN,'\n')
+	cat('  UPDATEFREQ:',x@UPDATEFREQ,'\n')
 	cat('  SEED:',x@SEED,'\n')
 }
 
@@ -237,7 +242,7 @@ OUTPUT OPTIONS
 
 #define SITEBYSITE   0  // (B) whether or not to print site by site results. (Linkage model only) This is a large file!
 #define PRINTQHAT    0  // (B) Q-hat printed to a separate file.  Turn this on before using STRAT.
-#define UPDATEFREQ   10000  // (int) frequency of printing update on the screen. Set automatically if this is 0.
+#define UPDATEFREQ   ',x@UPDATEFREQ,' // (int) frequency of printing update on the screen. Set automatically if this is 0.
 #define PRINTLIKES   0  // (B) print current likelihood to screen every rep
 #define INTERMEDSAVE 0  // (int) number of saves to file during run
 

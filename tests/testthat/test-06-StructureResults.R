@@ -1,3 +1,5 @@
+context('StructureResults')
+
 test_that('StructureResults', {
 	# create data
 	dir<-tempdir()
@@ -9,9 +11,9 @@ test_that('StructureResults', {
 	# identify bayescan path
 	structure.path <- system.file('bin', 'structure', package='structurer')
 	# run BayeScan
-	system(paste0(structure.path, ' ', ' -m ',file.path(dir, 'mainparams.txt'),' -e ',file.path(dir, 'extraparams.txt'),' -K ',2,' -L ',n.loci(sd),' -N ',n.samples(sd),' -i ',file.path(dir, 'data.txt'),' -o ',file.path(dir, 'output.txt')))
+	o<-system(paste0(structure.path, ' ', '-m ',file.path(dir, 'mainparams.txt'),' -e ',file.path(dir, 'extraparams.txt'),' -K ',so@MAXPOPS,' -L ',n.loci(sd),' -N ',n.samples(sd),' -i ',file.path(dir, 'data.txt'),' -o ', paste0(dir, '/output_run_1.txt'), ' -D ', so@SEED[1],' > ',paste0(dir, '/structure_run_1_log.txt'),' 2>&1'), intern=TRUE)
 	# try reading results back into R
-	results <- StructureResults(replicates=list(read.StructureReplicate(file.path(dir, 'output.txt_f'))))
+	results <- StructureResults(replicates=list(read.StructureReplicate(file.path(dir, 'output_run_1.txt_f'), file.path(dir, 'structure_run_1_log.txt'))))
 	# methods
 	print(results)
 	results

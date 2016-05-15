@@ -11,6 +11,7 @@ NULL
 #' @slot matrix \code{matrix} population membership probabilities. Each row is an individual. Each column is for a different population.
 #' @slot sample.names \code{character} name of samples.
 #' @slot log \code{character} log file.
+#' @slot mcmc \code{data.frame} MCMC updates during run.
 #' @seealso \code{\link{StructureReplicate}}.
 #' @export
 setClass(
@@ -21,7 +22,8 @@ setClass(
 		alpha='numeric',
 		matrix='matrix',
 		sample.names='character',
-		log='character'
+		log='character',
+		mcmc='data.frame'
 	),
 	validity=function(object) {
 		# check slots are finite
@@ -51,11 +53,12 @@ setClass(
 #' @param matrix \code{matrix} population membership probabilities. Each row is an individual. Each column is for a different population.
 #' @param sample.names \code{character} name of samples.
 #' @param log \code{character} log file.
+#' @param mcmc \code{data.frame} MCMC updates during run.
 #' @seealso \code{\link{StructureReplicate-class}}.
 #' @return \code{\link{StructureReplicate}}.
 #' @export
-StructureReplicate<-function(loglik, var_loglik, alpha, matrix, sample.names, log) {
-	x<-new("StructureReplicate", loglik=loglik, var_loglik=var_loglik, alpha=alpha, matrix=matrix, sample.names=sample.names, log=log)
+StructureReplicate<-function(loglik, var_loglik, alpha, matrix, sample.names, log, mcmc) {
+	x<-new("StructureReplicate", loglik=loglik, var_loglik=var_loglik, alpha=alpha, matrix=matrix, sample.names=sample.names, log=log, mcmc=mcmc)
 	validObject(x, test=FALSE)
 	return(x)
 }
@@ -98,29 +101,41 @@ loglik.StructureReplicate <- function(x) {
 #' This function reads the results of a single run of the Structure program.
 #'
 #' @param file \code{character} file path of output file.
+#' @param runfile \code{character} file path of file text printed to console during run.
 #' @seealso \code{\link{StructureReplicate-class}}.
 #' @return \code{\link{StructureReplicate}}.
 #' @export
-read.StructureReplicate<-function(file) {
+read.StructureReplicate <- function(file, runfile) {
 	# load file
-	logfile <- suppressWarnings(readLines(file))
+	outputfile <- suppressWarnings(readLines(file))
+	runfile <- suppressWarnings(readLines(runfile))
 	# load matrix
-	pars <- gsub(' ', '', gsub(',', '', strsplit(grep('NUMINDS', logfile, value=TRUE),'\t')[[1]], fixed=TRUE))
+	pars <- gsub(' ', '', gsub(',', '', strsplit(grep('NUMINDS', outputfile, value=TRUE),'\t')[[1]], fixed=TRUE))
 	n.inds <- as.numeric(gsub('NUMINDS=', '', grep('NUMINDS', pars, fixed=TRUE, value=TRUE), fixed=TRUE))
-	start.line <- grep('Inferred ancestry of individuals', logfile, fixed=TRUE)+1
-	mat <- read.table(file, skip=start.line, nrows=n.inds)
+	start.line <- grep('Inferred ancestry of individuals', outputfile, fixed=TRUE)+1
+	mat <- fread(file, skip=start.line, nrows=n.inds, data.table=FALSE)
 	# load alpha
-	alpha <-as.numeric(gsub('Mean value of alpha         = ', '', grep('Mean value of alpha', logfile, fixed=TRUE, value=TRUE), fixed=TRUE)) 
+	alpha <-as.numeric(gsub('Mean value of alpha         = ', '', grep('Mean value of alpha', outputfile, fixed=TRUE, value=TRUE), fixed=TRUE)) 
 	if (length(alpha)==0)
 		alpha <- NA_real_
+	# load mcmc updates
+	mcmc.matrix <- runfile[seq(grep('Rep#', runfile, fixed=TRUE)[1], grep('MCMC completed', runfile, fixed=TRUE)[1])]
+	mcmc.matrix <- mcmc.matrix[!grepl('Alpha',mcmc.matrix,fixed=TRUE)]
+	mcmc.matrix <- mcmc.matrix[!grepl('BURNIN',mcmc.matrix,fixed=TRUE)]
+	mcmc.matrix <- mcmc.matrix[!grepl('completed',mcmc.matrix,fixed=TRUE)]
+	mcmc.matrix <- mcmc.matrix[which(nchar(mcmc.matrix)>0)]
+	mcmc.matrix <- gsub(':', ' ', mcmc.matrix, fixed=TRUE)
+	mcmc.matrix <- as.matrix(fread(paste(mcmc.matrix, collapse='\n'), sep=' ', header=FALSE))
+	colnames(mcmc.matrix) <- c('Rep','Alpha', paste0('F', seq_len(ncol(mcmc.matrix)-4)), 'Ln.Like', 'Est.Ln.P.D')
 	# return object
 	StructureReplicate(
-		loglik=as.numeric(gsub('Mean value of ln likelihood = ', '', grep('Mean value of ln likelihood', logfile, fixed=TRUE, value=TRUE), fixed=TRUE)),
-		var_loglik=as.numeric(gsub('Variance of ln likelihood   = ', '', grep('Variance of ln likelihood', logfile, fixed=TRUE, value=TRUE), fixed=TRUE)),
+		loglik=as.numeric(gsub('Mean value of ln likelihood = ', '', grep('Mean value of ln likelihood', outputfile, fixed=TRUE, value=TRUE), fixed=TRUE)),
+		var_loglik=as.numeric(gsub('Variance of ln likelihood   = ', '', grep('Variance of ln likelihood', outputfile, fixed=TRUE, value=TRUE), fixed=TRUE)),
 		alpha=alpha,
 		matrix=as.matrix(mat[,c(-1, -2, -3, -4),drop=FALSE]),
 		sample.names=as.character(mat[[2]]),
-		log=logfile
+		log=outputfile,
+		mcmc=data.frame(mcmc.matrix)
 	)
 }
 

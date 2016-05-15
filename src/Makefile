@@ -1,4 +1,4 @@
-OPT = -O3 -march=native
+OPT = -O3
 #OPT = -O3 -m64 -static
 #OPT = -Wall -g 
 

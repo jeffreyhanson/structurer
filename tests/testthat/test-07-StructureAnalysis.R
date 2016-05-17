@@ -14,3 +14,9 @@ test_that('run.single.Structure', {
 	gelman.diag(sa)
 })
 
+test_that('run.single.Structure (parallel)', {
+	# make Structure object
+	sda <- read.StructureData(system.file('extdata', 'example_fstat_aflp.dat', package='structurer'))
+	sa <- run.single.Structure(sda, NUMRUNS=10, MAXPOPS=2, BURNIN=10, NUMREPS=10, NOADMIX=FALSE, ADMBURNIN=10, clean=FALSE, threads=2)
+})
+

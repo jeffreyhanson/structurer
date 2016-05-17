@@ -220,7 +220,7 @@ traceplot.StructureAnalysis <- function(x, ...) {
 	# extract logliks
 	ll <- data.frame(iteration=x@results@replicates[[1]]@mcmc$Rep)
 	ll <- cbind(ll, data.frame(sapply(x@results@replicates, function(y) {y@mcmc$Ln.Like})))
-	ll <- ll[rowSums(ll)<0,]
+	ll <- ll[rowSums(ll[,-1])<0,]
 	if (ncol(ll)==2) names(ll)[2] <- 'X1'
 	ll <- gather(ll, chain, loglik, -iteration)
 	ll$chain <- as.factor(as.numeric(gsub('X', '', ll$chain, fixed=TRUE)))
@@ -243,7 +243,7 @@ gelman.diag.StructureAnalysis <- function(x, ...) {
 	if (length(x@results@replicates)>1) {
 		# extract -logliks
 		ll <- sapply(x@results@replicates, function(y) {y@mcmc$Ln.Like})
-		ll <- ll[rowSums(ll)<0,]
+		ll <- ll[rowSums(ll[-1,])<0,]
 		ll2 <- list()
 		for (i in seq_len(ncol(ll))) {
 			curr.burnin <- ifelse(sum(grepl('Admixture Burnin complete', x@results@replicates[[i]]@log, fixed=TRUE))>0, x@opts@ADMBURNIN, 0)+x@opts@BURNIN

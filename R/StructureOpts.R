@@ -196,7 +196,7 @@ PROGRAM OPTIONS
 #define USEPOPINFO  0 // (B) Use prior population information to pre-assign individuals to clusters
 #define LOCPRIOR    0 //(B)  Use location information to improve weak data
 
-#define FREQSCORR   1 // (B) allele frequencies are correlated among pops
+#define FREQSCORR   0 // (B) allele frequencies are correlated among pops
 #define ONEFST      0 // (B) assume same value of Fst for all subpopulations.
 
 #define INFERALPHA  1 // (B) Infer ALPHA (the admixture parameter)

@@ -131,7 +131,7 @@ read.StructureReplicate <- function(file, runfile) {
 	mcmc.matrix <- mcmc.matrix[which(nchar(mcmc.matrix)>0)]
 	mcmc.matrix <- gsub(':', ' ', mcmc.matrix, fixed=TRUE)
 	mcmc.matrix <- fread(paste(mcmc.matrix, collapse='\n'), sep=' ', header=FALSE, data.table=FALSE)
-	names(mcmc.matrix) <- c('Rep','Alpha', paste0('F', seq_len(ncol(mcmc.matrix)-4)), 'Ln.Like', 'Est.Ln.P.D')
+	names(mcmc.matrix) <- c('Rep','Alpha', paste0(rep('F', ncol(mcmc.matrix)-4), seq_len(ncol(mcmc.matrix)-4)), 'Ln.Like', 'Est.Ln.P.D')
 	# return object
 	StructureReplicate(
 		loglik=as.numeric(gsub('Mean value of ln likelihood = ', '', grep('Mean value of ln likelihood', outputfile, fixed=TRUE, value=TRUE), fixed=TRUE)),

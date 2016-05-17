@@ -247,7 +247,7 @@ gelman.diag.StructureAnalysis <- function(x, ...) {
 		ll2 <- list()
 		for (i in seq_len(ncol(ll))) {
 			curr.burnin <- ifelse(sum(grepl('Admixture Burnin complete', x@results@replicates[[i]]@log, fixed=TRUE))>0, x@opts@ADMBURNIN, 0)+x@opts@BURNIN
-			ll2[[i]] <- mcmc(ll[i,], start=curr.burnin+1, thin=x@opts@UPDATEFREQ)
+			ll2[[i]] <- mcmc(ll[,i], start=curr.burnin+1, thin=x@opts@UPDATEFREQ)
 		}
 		# return object
 		return(coda::gelman.diag(mcmc.list(ll2), autoburnin=FALSE))

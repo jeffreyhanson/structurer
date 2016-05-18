@@ -131,12 +131,12 @@ sample.membership.StructureAnalysis <- function(x, threshold=NULL) {
 #' x <- run.single.Structure(dat, NUMRUNS=1, MAXPOPS=2, BURNIN=10,
 #'	NUMREPS=10, NOADMIX=FALSE, ADMBURNIN=10)
 #' @export
-run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, SEED=sample.int(1e5,NUMRUNS), 
+run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, FREQSCORR=TRUE, SEED=sample.int(1e5,NUMRUNS), 
 	UPDATEFREQ=max(floor(BURNIN+NUMREPS)/1000,1), M='Greedy', W=TRUE, S=FALSE, REPEATS=1000, dir=tempdir(), clean=TRUE, verbose=FALSE, threads=1)
 {
 	## initialization
 	# argument checks
-	opts <- StructureOpts(NUMRUNS=NUMRUNS, MAXPOPS=MAXPOPS, BURNIN=BURNIN, NUMREPS=NUMREPS, NOADMIX=NOADMIX, ADMBURNIN=ADMBURNIN, SEED=SEED, UPDATEFREQ=UPDATEFREQ)
+	opts <- StructureOpts(NUMRUNS=NUMRUNS, MAXPOPS=MAXPOPS, BURNIN=BURNIN, NUMREPS=NUMREPS, NOADMIX=NOADMIX, ADMBURNIN=ADMBURNIN, FREQSCORR=FREQSCORR, SEED=SEED, UPDATEFREQ=UPDATEFREQ)
 	opts2 <- ClumppOpts(M=M, W=W, S=S, REPEATS=REPEATS)
 	expect_is(x, 'StructureData')
 	# identify structure path

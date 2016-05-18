@@ -11,6 +11,7 @@ NULL
 #' @slot NUMREPS \code{numeric} Number of MCMC iterations for inference. Defaults to 20000.
 #' @slot NOADMIX \code{logical} Do not use admixture model. Defaults to \code{FALSE}.
 #' @slot ADMBURNIN \code{numeric} Initial period of burnin with admixture model. Defaults to 500.
+#' @slot FREQSCORR \code{logical} Allele frequencies are correlated among populations? Defaults to \code{TRUE}.
 #' @slot SEED \code{numeric} Seed for random number generator. Defaults to NA so a random seed is used.
 #' @slot UPDATEFREQ \code{numeric} Frequency to store updates to loglikelihood for traceplots. Defaults to 200.
 #' @seealso \code{\link{StructureOpts}}.
@@ -24,6 +25,7 @@ setClass(
 		NUMREPS="numeric",
 		NOADMIX="logical",
 		ADMBURNIN="numeric",
+		FREQSCORR="logical",
 		SEED="numeric",
 		UPDATEFREQ="numeric"
 	),
@@ -34,6 +36,7 @@ setClass(
 		NUMREPS=20000,
 		NOADMIX=FALSE,
 		ADMBURNIN=5000,
+		FREQSCORR=TRUE,
 		SEED=NA_real_,
 		UPDATEFREQ=200
 	),
@@ -67,16 +70,17 @@ setClass(
 #' @param NUMREPS \code{numeric} Number of MCMC iterations for inference. Defaults to 20000.
 #' @param NOADMIX \code{logical} Do not use admixture model. Defaults to \code{FALSE}.
 #' @param ADMBURNIN \code{numeric} Initial period of burnin with admixture model. Defaults to 500.
+#' @param FREQSCORR \code{logical} Allele frequencies are correlated among populations? Defaults to \code{TRUE}.
 #' @param SEED \code{numeric} Seed for random number generator. Defaults to NA so a random seed is used.
 #' @param UPDATEFREQ \code{numeric} Frequency to store updates to loglikelihood for traceplots. Defaults to yield 1000 frequencies.
 #' @seealso \code{\link{StructureOpts-class}}.
 #' @examples 
 #' StructureOpts(NUMRUNS=2, MAXPOPS=2, BURNIN=10000,
 #'   NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, 
-#'   SEED=1:2, UPDATEFREQ=100)
+#'   FREQSCORR=TRUE, SEED=1:2, UPDATEFREQ=100)
 #' @export
-StructureOpts<-function(NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, SEED=sample.int(1e5,NUMRUNS), UPDATEFREQ=max(floor(BURNIN+NUMREPS)/1000,1)) {
-	x<-new("StructureOpts", NUMRUNS=NUMRUNS, MAXPOPS=MAXPOPS, BURNIN=BURNIN, NUMREPS=NUMREPS, NOADMIX=NOADMIX, ADMBURNIN=ADMBURNIN, SEED=SEED, UPDATEFREQ=UPDATEFREQ)
+StructureOpts<-function(NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, FREQSCORR=TRUE, SEED=sample.int(1e5,NUMRUNS), UPDATEFREQ=max(floor(BURNIN+NUMREPS)/1000,1)) {
+	x<-new("StructureOpts", NUMRUNS=NUMRUNS, MAXPOPS=MAXPOPS, BURNIN=BURNIN, NUMREPS=NUMREPS, NOADMIX=NOADMIX, ADMBURNIN=ADMBURNIN, FREQSCORR=FREQSCORR, SEED=SEED, UPDATEFREQ=UPDATEFREQ)
 	validObject(x, test=FALSE)
 	return(x)
 }
@@ -93,6 +97,7 @@ print.StructureOpts=function(x, ..., header=TRUE) {
 	cat('  NUMREPS:',x@NUMREPS,'\n')
 	cat('  NOADMIX:',x@NOADMIX,'\n')
 	cat('  ADMBURNIN:',x@ADMBURNIN,'\n')
+	cat('  FREQSCORR:',x@FREQSCORR,'\n')
 	cat('  UPDATEFREQ:',x@UPDATEFREQ,'\n')
 	cat('  SEED:',x@SEED,'\n')
 }
@@ -196,7 +201,7 @@ PROGRAM OPTIONS
 #define USEPOPINFO  0 // (B) Use prior population information to pre-assign individuals to clusters
 #define LOCPRIOR    0 //(B)  Use location information to improve weak data
 
-#define FREQSCORR   0 // (B) allele frequencies are correlated among pops
+#define FREQSCORR   ',as.numeric(x@FREQSCORR),' // (B) allele frequencies are correlated among pops
 #define ONEFST      0 // (B) assume same value of Fst for all subpopulations.
 
 #define INFERALPHA  1 // (B) Infer ALPHA (the admixture parameter)

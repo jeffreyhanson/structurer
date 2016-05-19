@@ -1,5 +1,11 @@
+#' @importFrom stats sd
+
+#' @importFrom utils write.table
+
 #' @importFrom methods setClass
 #' @importFrom methods show
+#' @importFrom methods new
+#' @importFrom methods validObject
 
 #' @importFrom data.table fread
 

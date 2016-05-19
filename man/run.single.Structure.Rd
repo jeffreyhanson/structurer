@@ -5,7 +5,7 @@
 \title{Run Structure anaylsis for a single MAXPOPS parameter.}
 \usage{
 run.single.Structure(x, NUMRUNS = 2, MAXPOPS = 2, BURNIN = 10000,
-  NUMREPS = 20000, NOADMIX = FALSE, ADMBURNIN = 500,
+  NUMREPS = 20000, NOADMIX = FALSE, ADMBURNIN = 500, FREQSCORR = TRUE,
   SEED = sample.int(1e+05, NUMRUNS), UPDATEFREQ = max(floor(BURNIN +
   NUMREPS)/1000, 1), M = "Greedy", W = TRUE, S = FALSE, REPEATS = 1000,
   dir = tempdir(), clean = TRUE, verbose = FALSE, threads = 1)
@@ -24,6 +24,8 @@ run.single.Structure(x, NUMRUNS = 2, MAXPOPS = 2, BURNIN = 10000,
 \item{NOADMIX}{\code{logical} Do not use admixture model. Defaults to \code{FALSE}.}
 
 \item{ADMBURNIN}{\code{numeric} Initial period of burnin with admixture model. Defaults to 500.}
+
+\item{FREQSCORR}{\code{logical} Allele frequencies are correlated among populations? Defaults to \code{TRUE}.}
 
 \item{SEED}{\code{numeric} Seed for random number generator. Defaults to NA so a random seed is used.}
 

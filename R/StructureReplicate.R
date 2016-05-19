@@ -121,7 +121,7 @@ read.StructureReplicate <- function(file, runfile) {
 	alpha <-as.numeric(gsub('Mean value of alpha         = ', '', grep('Mean value of alpha', outputfile, fixed=TRUE, value=TRUE), fixed=TRUE)) 
 	if (length(alpha)==0)
 		alpha <- NA_real_
-	# load mcmc updates
+	# parse mcmc matrix
 	mcmc.matrix <- runfile[seq(grep('Rep#', runfile, fixed=TRUE)[1], grep('MCMC completed', runfile, fixed=TRUE)[1])]
 	mcmc.matrix <- mcmc.matrix[!grepl('Alpha',mcmc.matrix,fixed=TRUE)]
 	mcmc.matrix <- mcmc.matrix[!grepl('BURNIN',mcmc.matrix,fixed=TRUE)]
@@ -131,7 +131,17 @@ read.StructureReplicate <- function(file, runfile) {
 	mcmc.matrix <- mcmc.matrix[which(nchar(mcmc.matrix)>0)]
 	mcmc.matrix <- gsub(':', ' ', mcmc.matrix, fixed=TRUE)
 	mcmc.matrix <- fread(paste(mcmc.matrix, collapse='\n'), sep=' ', header=FALSE, data.table=FALSE)
-	names(mcmc.matrix) <- c('Rep','Alpha', paste0(rep('F', ncol(mcmc.matrix)-4), seq_len(ncol(mcmc.matrix)-4)), 'Ln.Like', 'Est.Ln.P.D')
+	# parse mcmc matrix column names
+	mcmc.colnames <- grep('Est Ln', runfile, fixed=TRUE, value=TRUE)[1]
+	mcmc.colnames <- gsub('#', '', mcmc.colnames, fixed=TRUE)
+	mcmc.colnames <- gsub(':', '', mcmc.colnames, fixed=TRUE)
+	mcmc.colnames <- gsub('(', '', mcmc.colnames, fixed=TRUE)
+	mcmc.colnames <- gsub(')', '', mcmc.colnames, fixed=TRUE)
+	mcmc.colnames <- strsplit(mcmc.colnames, '  ')
+	mcmc.colnames <- sapply(mcmc.colnames, trimws)
+	mcmc.colnames <- mcmc.colnames[which(nchar(mcmc.colnames)>0)]
+	mcmc.colnames <- gsub(' ', '.', mcmc.colnames, fixed=TRUE)
+	names(mcmc.matrix) <- mcmc.colnames
 	# return object
 	StructureReplicate(
 		loglik=as.numeric(gsub('Mean value of ln likelihood = ', '', grep('Mean value of ln likelihood', outputfile, fixed=TRUE, value=TRUE), fixed=TRUE)),

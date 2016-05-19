@@ -10,6 +10,8 @@ Authors@R: c(person(c("Jeffrey", "O"), "Hanson", email='jeffrey.hanson@uqconnect
 Description: .
     Currently, only binary AFLP data is supported.
 Imports:
+    utils,
+    stats,
     methods,
     data.table,
     testthat,

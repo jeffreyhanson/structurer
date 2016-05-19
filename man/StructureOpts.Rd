@@ -5,8 +5,9 @@
 \title{Create StructureOpts object}
 \usage{
 StructureOpts(NUMRUNS = 2, MAXPOPS = 2, BURNIN = 10000, NUMREPS = 20000,
-  NOADMIX = FALSE, ADMBURNIN = 500, SEED = sample.int(1e+05, NUMRUNS),
-  UPDATEFREQ = max(floor(BURNIN + NUMREPS)/1000, 1))
+  NOADMIX = FALSE, ADMBURNIN = 500, FREQSCORR = TRUE,
+  SEED = sample.int(1e+05, NUMRUNS), UPDATEFREQ = max(floor(BURNIN +
+  NUMREPS)/1000, 1))
 }
 \arguments{
 \item{NUMRUNS}{\code{numeric} Number of replicate Structure runs. Defaults to 2.}
@@ -21,6 +22,8 @@ StructureOpts(NUMRUNS = 2, MAXPOPS = 2, BURNIN = 10000, NUMREPS = 20000,
 
 \item{ADMBURNIN}{\code{numeric} Initial period of burnin with admixture model. Defaults to 500.}
 
+\item{FREQSCORR}{\code{logical} Allele frequencies are correlated among populations? Defaults to \code{TRUE}.}
+
 \item{SEED}{\code{numeric} Seed for random number generator. Defaults to NA so a random seed is used.}
 
 \item{UPDATEFREQ}{\code{numeric} Frequency to store updates to loglikelihood for traceplots. Defaults to yield 1000 frequencies.}
@@ -31,7 +34,7 @@ This function creates a new \code{StructureOpts} object.
 \examples{
 StructureOpts(NUMRUNS=2, MAXPOPS=2, BURNIN=10000,
   NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, 
-  SEED=1:2, UPDATEFREQ=100)
+  FREQSCORR=TRUE, SEED=1:2, UPDATEFREQ=100)
 }
 \seealso{
 \code{\link{StructureOpts-class}}.

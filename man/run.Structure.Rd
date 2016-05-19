@@ -5,7 +5,7 @@
 \title{Run Structure anaylsis}
 \usage{
 run.Structure(x, NUMRUNS = 2, MAXPOPS = 1:10, BURNIN = 10000,
-  NUMREPS = 20000, NOADMIX = FALSE, ADMBURNIN = 500,
+  NUMREPS = 20000, NOADMIX = FALSE, ADMBURNIN = 500, FREQSCORR = TRUE,
   UPDATEFREQ = max(floor(BURNIN + NUMREPS)/1000, 1), M = "Greedy",
   W = TRUE, S = FALSE, REPEATS = 1000, dir = tempdir(), clean = TRUE,
   verbose = FALSE, threads = 1)
@@ -24,6 +24,8 @@ run.Structure(x, NUMRUNS = 2, MAXPOPS = 1:10, BURNIN = 10000,
 \item{NOADMIX}{\code{logical} Do not use admixture model. Defaults to \code{FALSE}.}
 
 \item{ADMBURNIN}{\code{numeric} Initial period of burnin with admixture model. Defaults to 500.}
+
+\item{FREQSCORR}{\code{logical} Allele frequencies are correlated among populations? Defaults to \code{TRUE}.}
 
 \item{UPDATEFREQ}{\code{numeric} Frequency to store updates to loglikelihood for traceplots. Defaults to yield 1000 frequencies.}
 

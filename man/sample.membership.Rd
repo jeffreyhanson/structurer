@@ -8,13 +8,13 @@
 \alias{sample.membership.StructureResults}
 \title{Sample membership}
 \usage{
-sample.membership(x, threshold)
+sample.membership(x, threshold, ...)
 
 \method{sample.membership}{StructureReplicate}(x)
 
 \method{sample.membership}{StructureResults}(x, threshold = NULL, ...)
 
-\method{sample.membership}{StructureAnalysis}(x, threshold = NULL)
+\method{sample.membership}{StructureAnalysis}(x, threshold = NULL, ...)
 
 \method{sample.membership}{StructureCollection}(x, threshold = NULL,
   k = x@best, ...)
@@ -23,6 +23,10 @@ sample.membership(x, threshold)
 \item{x}{\code{StructureReplicate}, \code{StructureResults}, \code{StructureAnalysis}.}
 
 \item{threshold}{\code{numeric} threshold to assign samples to populations. If \code{NULL} then probabilities for each population are returned. Defaults to \code{NULL}.}
+
+\item{...}{not used.}
+
+\item{k}{\code{numeric} number of populations to assume. Defaults to the best number according to Evanno's method.}
 }
 \value{
 \code{integer}.

@@ -10,6 +10,8 @@ test_that('run.single.Structure (default parameters)', {
 	n.samples(sa)
 	sample.membership(sa)
 	n.pop(sa)
+	loglik(sa)
+	lnprob(sa)
 	traceplot(sa)
 	gelman.diag(sa)
 })

@@ -19,6 +19,15 @@ n.loci <- function(x) UseMethod('n.loci')
 #' @export
 loglik <- function(x) UseMethod('loglik')
 
+#' Probability of the model
+#'
+#' This function returns the ln probability of a Structure analysis.
+#'
+#' @param x \code{StructureReplicate}, \code{StructureResults}, \code{StructureAnalysis} or \code{StructureCollection} object.
+#' @return \code{numeric}.
+#' @export
+lnprob <- function(x) UseMethod('lnprob')
+
 #' Number of samples
 #'
 #' This function returns the number of samples in a \code{Structure} object.
@@ -138,7 +147,7 @@ delta.k.plot <- function(x, main) UseMethod('delta.k.plot')
 #' This function plots a traceplot showing the negative log-likelihood values in a \code{StructureCollection} object.
 #' 
 #' @param x \code{StructureCollection} or \code{StructureAnalysis} object.
-#' @param K \code{numeric} indicating number of populations to make traceplot for if \code{x} is a \code{StructureCollection} object.
+#' @param k \code{numeric} indicating number of populations to make traceplot for if \code{x} is a \code{StructureCollection} object.
 #' @param ... not used.
 #' @seealso \code{\link{StructureCollection}}.
 traceplot <- function(x, ...) UseMethod('traceplot')
@@ -147,7 +156,7 @@ traceplot <- function(x, ...) UseMethod('traceplot')
 #'
 #' This function returns the Gelman-Rubin diagnostic statistics for the negative loglikelihood of multiple Structure runs. See \code{\link[coda]{gelman.diag}} for more information.
 #' @param x \code{StructureCollection} or \code{StructureAnalysis} object.
-#' @param K \code{numeric} indicating number of populations to report statistic for if \code{x} is a \code{StructureCollection} object.
+#' @param k \code{numeric} indicating number of populations to report statistic for if \code{x} is a \code{StructureCollection} object.
 #' @param ... arguments passed to \code{\link[coda]{gelman.diag}}.
 #' @name gelman.diag
 gelman.diag <- function(x, ...) UseMethod('gelman.diag')

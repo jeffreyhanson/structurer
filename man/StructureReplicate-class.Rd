@@ -10,6 +10,8 @@ This class stores results from the Structure program.
 \section{Slots}{
 
 \describe{
+\item{\code{lnprob}}{\code{numeric} estimated ln probability of the model.}
+
 \item{\code{loglik}}{\code{numeric} mean negative loglikelihood of model.}
 
 \item{\code{var_loglik}}{\code{numeric} variance in negative loglikelihood of model.}

@@ -10,14 +10,14 @@ traceplot(x, ...)
 
 \method{traceplot}{StructureAnalysis}(x, ...)
 
-\method{traceplot}{StructureCollection}(x, K = x@best, ...)
+\method{traceplot}{StructureCollection}(x, k = x@best, ...)
 }
 \arguments{
 \item{x}{\code{StructureCollection} or \code{StructureAnalysis} object.}
 
 \item{...}{not used.}
 
-\item{K}{\code{numeric} indicating number of populations to make traceplot for if \code{x} is a \code{StructureCollection} object.}
+\item{k}{\code{numeric} indicating number of populations to make traceplot for if \code{x} is a \code{StructureCollection} object.}
 }
 \description{
 This function plots a traceplot showing the negative log-likelihood values in a \code{StructureCollection} object.

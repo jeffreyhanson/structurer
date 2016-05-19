@@ -92,7 +92,7 @@ sample.names.StructureResults <- function(x) {
 #' @rdname sample.membership
 #' @method sample.membership StructureResults
 #' @export
-sample.membership.StructureResults <- function(x, threshold=NULL) {
+sample.membership.StructureResults <- function(x, threshold=NULL, ...) {
 	if (is.null(threshold))
 		return(x@summary)
 	pops <- apply(x@summary, 1, which.max)
@@ -107,6 +107,13 @@ loglik.StructureResults <- function(x) {
 	return(mean(sapply(x@replicates, loglik.StructureReplicate)))
 }
 
+#' @rdname lnprob
+#' @method lnprob StructureResults
+#' @export
+lnprob.StructureResults <- function(x) {
+	return(mean(sapply(x@replicates, lnprob.StructureReplicate)))
+}
+
 #' @method print StructureResults
 #' @rdname print
 #' @export
@@ -114,7 +121,7 @@ print.StructureResults=function(x, ..., header=TRUE) {
 	if (header)
 		cat("StructureResults object.\n")
 	cat('  K:',n.pop(x),'\n')
-	cat('  loglik:',loglik.StructureResults(x),'\n')
+	cat('  lnprob:',lnprob.StructureResults(x),'\n')
 }
 
 #' @rdname show

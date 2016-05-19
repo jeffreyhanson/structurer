@@ -113,6 +113,20 @@ sample.membership.StructureAnalysis <- function(x, threshold=NULL) {
 	return(sample.membership(x@results, threshold))
 }
 
+#' @rdname loglik
+#' @method loglik StructureAnalysis
+#' @export
+loglik.StructureAnalysis <- function(x) {
+	return(loglik(x@results))
+}
+
+#' @rdname lnprob
+#' @method lnprob StructureAnalysis
+#' @export
+lnprob.StructureAnalysis <- function(x) {
+	return(lnprob(x@results))
+}
+
 
 #' Run Structure anaylsis for a single MAXPOPS parameter.
 #'

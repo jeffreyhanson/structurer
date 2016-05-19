@@ -5,6 +5,7 @@ NULL
 #'
 #' This class stores results from the Structure program.
 #'
+#' @slot lnprob \code{numeric} estimated ln probability of the model.
 #' @slot loglik \code{numeric} mean negative loglikelihood of model.
 #' @slot var_loglik \code{numeric} variance in negative loglikelihood of model.
 #' @slot alpha \code{numeric} mean value of alpha.
@@ -18,6 +19,7 @@ NULL
 setClass(
 	"StructureReplicate",
 	representation(
+		lnprob='numeric',
 		loglik='numeric',
 		var_loglik='numeric',
 		alpha='numeric',
@@ -29,7 +31,7 @@ setClass(
 	),
 	validity=function(object) {
 		# check slots are finite
-		sapply(c('loglik', 'var_loglik'),
+		sapply(c('lnprob', 'loglik', 'var_loglik'),
 			function(x) {
 				expect_true(is.finite(slot(object, x)))
 			}
@@ -49,6 +51,7 @@ setClass(
 #'
 #' This function creates a new \code{StructureReplicate} object.
 #'
+#' @param lnprob \code{numeric} estimated ln probability of the model.
 #' @param loglik \code{numeric} mean negative loglikelihood of model.
 #' @param var_loglik \code{numeric} variance in negative loglikelihood of model.
 #' @param alpha \code{numeric} mean value of alpha.
@@ -60,8 +63,8 @@ setClass(
 #' @seealso \code{\link{StructureReplicate-class}}.
 #' @return \code{\link{StructureReplicate}}.
 #' @export
-StructureReplicate<-function(loglik, var_loglik, alpha, matrix, sample.names, output, log, mcmc) {
-	x<-new("StructureReplicate", loglik=loglik, var_loglik=var_loglik, alpha=alpha, matrix=matrix, sample.names=sample.names, output=output, log=log, mcmc=mcmc)
+StructureReplicate<-function(lnprob, loglik, var_loglik, alpha, matrix, sample.names, output, log, mcmc) {
+	x<-new("StructureReplicate", lnprob=lnprob, loglik=loglik, var_loglik=var_loglik, alpha=alpha, matrix=matrix, sample.names=sample.names, output=output, log=log, mcmc=mcmc)
 	validObject(x, test=FALSE)
 	return(x)
 }
@@ -97,6 +100,12 @@ sample.membership.StructureReplicate <- function(x) {
 #' @method loglik StructureReplicate
 loglik.StructureReplicate <- function(x) {
 	return(x@loglik)
+}
+
+#' @rdname lnprob
+#' @method lnprob StructureReplicate
+lnprob.StructureReplicate <- function(x) {
+	return(x@lnprob)
 }
 
 #' Read Structure run
@@ -144,6 +153,7 @@ read.StructureReplicate <- function(file, runfile) {
 	names(mcmc.matrix) <- mcmc.colnames
 	# return object
 	StructureReplicate(
+		lnprob=as.numeric(gsub('Estimated Ln Prob of Data   = ', '', grep('Estimated Ln Prob of Data', outputfile, fixed=TRUE, value=TRUE), fixed=TRUE)),
 		loglik=as.numeric(gsub('Mean value of ln likelihood = ', '', grep('Mean value of ln likelihood', outputfile, fixed=TRUE, value=TRUE), fixed=TRUE)),
 		var_loglik=as.numeric(gsub('Variance of ln likelihood   = ', '', grep('Variance of ln likelihood', outputfile, fixed=TRUE, value=TRUE), fixed=TRUE)),
 		alpha=alpha,
@@ -162,7 +172,7 @@ print.StructureReplicate=function(x, ..., header=TRUE) {
 	if (header)
 		cat("StructureReplicate object.\n")
 	cat('  K:',n.pop(x),'\n')
-	cat('  loglik:',loglik(x),'\n')
+	cat('  lnprob:',lnprob(x),'\n')
 }
 
 #' @rdname show

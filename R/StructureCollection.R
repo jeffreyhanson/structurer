@@ -24,7 +24,7 @@ setClass(
 		})
 		expect_equal(length(unique(sapply(object@analyses, n.samples))),1)
 		# delta.k
-		expect_equal(names(object@summary), c('k','mean.loglik','sd.loglik','delta.k','n.replicates'))
+		expect_equal(names(object@summary), c('k','mean.lnprob','sd.lnprob','delta.k','n.replicates'))
 		expect_equal(nrow(object@summary),length(object@analyses))
 		# best
 		expect_true(is.finite(object@best))
@@ -43,28 +43,28 @@ setClass(
 #' @details The delta-k values are calculated using the method used by Structure Harvestor \url{http://taylor0.biology.ucla.edu/structureHarvester/faq.html.}
 #' @export
 StructureCollection<-function(analyses) {
+	## k is calued using method used in structureHarvestor
 	# calculate summary
-	## k is calued using method used in structureHarvestor, see 
-	# extract ll
-	ll <- sapply(analyses, function(x) {sapply(x@results@replicates, loglik.StructureReplicate)})
-	ll.mean <- colMeans(ll)
-	ll.sd <- apply(ll, 2, sd)
+	# extract ln
+	ln <- sapply(analyses, function(x) {sapply(x@results@replicates, lnprob.StructureReplicate)})
+	ln.mean <- colMeans(ln)
+	ln.sd <- apply(ln, 2, sd)
 	# delta k calculations
-	prevK <- ll.mean[1:(length(ll.mean)-2)]
-	nextK <- ll.mean[3:(length(ll.mean))]
-	thisK <- ll.mean[2:(length(ll.mean)-1)]
-	thisKsd <- ll.sd[2:(length(ll.mean)-1)]
-	delta.k <- abs(nextK - (2*thisK ) + prevK) / thisKsd
+	thisK <- ln.mean[2:(length(ln.mean)-1)]
+	this.K.sd <- ln.sd[2:(length(ln.sd)-1)]
+	prevK <- ln.mean[1:(length(ln.mean)-2)]
+	nextK <- ln.mean[3:(length(ln.mean))]
+	delta.k <- abs(nextK - (2 * thisK) + prevK) / this.K.sd
 	# generate data.frame
 	summary.data <- data.frame(
 		k=sapply(analyses, function(x) {x@opts@MAXPOPS}),
-		mean.loglik=ll.mean,
-		sd.loglik=ll.sd,
+		mean.lnprob=ln.mean,
+		sd.lnprob=ln.sd,
 		delta.k=c(NA, delta.k,NA),
 		n.replicates=sapply(analyses, function(x) {length(x@results@replicates)})
 	)
 	# determine best
-	best <- which.max(summary.data$delta.k)
+	best <- summary.data$k[which.max(summary.data$delta.k)]
 	# create object
 	x<-new("StructureCollection", summary=summary.data, best=best, analyses=analyses)
 	validObject(x, test=FALSE)
@@ -93,18 +93,33 @@ run.Structure<-function(x, NUMRUNS=2, MAXPOPS=1:10, BURNIN=10000, NUMREPS=20000,
 	M='Greedy', W=TRUE, S=FALSE, REPEATS=1000, dir=tempdir(), clean=TRUE, verbose=FALSE, threads=1)
 {
 	test_that('argument to MAXPOPS have at least 3 elements', expect_true(length(MAXPOPS) >= 3))
+	# init
+	sub.threads = min(threads,NUMRUNS)
+	main.threads = max(floor(threads/sub.threads),1)
+	# set up parallelisation
+	if (main.threads > 1) {
+	clust <- makeCluster(main.threads, 'PSOCK')
+		clusterEvalQ(clust, library(structurer))
+		clusterExport(clust, c('x', 'NUMRUNS', 'BURNIN', 'NUMREPS', 'NOADMIX', 'ADMBURNIN', 'FREQSCORR',
+			'UPDATEFREQ', 'M', 'W', 'S', 'REPEATS', 'dir', 'clean', 'verbose', 'sub.threads'), envir=environment())
+	}
 	# run analysis
-	return(
-		StructureCollection(
-			analyses=lapply(MAXPOPS, function(n) {
-				if (verbose) cat('starting MAXPOPS: ',n,'\n')
-				curr.dir <- paste0(dir,'/k',n)
-				dir.create(curr.dir)
-				run.single.Structure(x, NUMRUNS=NUMRUNS, MAXPOPS=n, BURNIN=BURNIN, NUMREPS=NUMREPS, NOADMIX=NOADMIX, ADMBURNIN=ADMBURNIN, FREQSCORR=FREQSCORR, UPDATEFREQ=UPDATEFREQ,
-					M=M, W=W, S=S, REPEATS=REPEATS, dir=curr.dir, clean=clean, verbose=verbose, threads=threads)
-			})
-		)
+	lst=llply(
+		MAXPOPS,
+		function(k) {
+			if (verbose) cat('starting MAXPOPS: ',k,'\n')
+			curr.dir <- paste0(dir,'/k',k)
+			dir.create(curr.dir)
+			run.single.Structure(x, NUMRUNS=NUMRUNS, MAXPOPS=k, BURNIN=BURNIN, NUMREPS=NUMREPS, NOADMIX=NOADMIX, ADMBURNIN=ADMBURNIN, FREQSCORR=FREQSCORR, UPDATEFREQ=UPDATEFREQ, M=M, W=W, S=S, REPEATS=REPEATS, dir=curr.dir, clean=clean, verbose=verbose, threads=sub.threads)
+		},
+		.parallel=(main.threads>1)
 	)
+	# post
+	if (main.threads > 1) {
+		stopCluster(clust)
+	}
+	# return object
+	return(StructureCollection(analyses=lst))
 }
 
 #' @rdname n.loci
@@ -118,8 +133,9 @@ n.loci.StructureCollection <- function(x) {
 #' @method n.pop StructureCollection
 #' @export
 n.pop.StructureCollection <- function(x) {
-	return(n.pop(x@analyses[[x@best]]@opts))
+	return(n.pop(x@analyses[[1]]@opts))
 }
+
 
 #' @rdname n.samples
 #' @method n.samples StructureCollection
@@ -138,8 +154,11 @@ sample.names.StructureCollection <- function(x) {
 #' @rdname sample.membership
 #' @method sample.membership StructureCollection
 #' @export
-sample.membership.StructureCollection <- function(x, threshold=NULL) {
-	return(sample.membership(x@analyses[[x@best]], threshold))
+sample.membership.StructureCollection <- function(x, threshold=NULL, k=x@best, ...) {
+	pos <- which(sapply(x@analyses, function(z) {z@opts@MAXPOPS==k}))
+	if (length(pos)==0)
+		stop('Specified k is not in the StructureCollection object.')
+	return(sample.membership(x@analyses[[pos]], threshold))
 }
 
 #' @rdname sample.names
@@ -179,13 +198,8 @@ loci.names.StructureCollection <- function(x) {
 print.StructureCollection=function(x, ..., header=TRUE) {
 	if (header)
 		cat("StructureCollection object.\n\n")
-	cat('Best K:',x@analyses[[x@best]]@opts@MAXPOPS,'\n')
-	cat('Options','\n')
-	print(x@analyses[[x@best]]@opts, header=FALSE)
-	cat('Data','\n')
-	print(x@analyses[[x@best]]@data, header=FALSE)
-	cat('Results','\n')
-	print(x@analyses[[x@best]]@results, header=FALSE)
+	cat('Best K:',x@best,'\n')
+	print(x@analyses[[which(sapply(x@analyses, function(z) {z@opts@MAXPOPS==x@best}))]], header=FALSE)
 }
 
 #' @rdname show
@@ -237,14 +251,20 @@ delta.k.plot.StructureCollection <- function(x, main='Delta-K plot') {
 #' @rdname traceplot
 #' @method traceplot StructureCollection
 #' @export
-traceplot.StructureCollection <- function(x, K=x@best, ...) {
-	traceplot.StructureAnalysis(x@analyses[[x@best]])
+traceplot.StructureCollection <- function(x, k=x@best, ...) {
+	pos <- which(sapply(x@analyses, function(z) {z@opts@MAXPOPS==k}))
+	if (length(pos)==0)
+		stop('Specified k is not in the StructureCollection object.')
+	return(traceplot.StructureAnalysis(x@analyses[[pos]]))
 }
 
 #' @rdname gelman.diag
 #' @method gelman.diag StructureCollection
 #' @export
-gelman.diag.StructureCollection <- function(x, K=x@best, ...) {
-	gelman.diag.StructureAnalysis(x@analyses[[x@best]])
+gelman.diag.StructureCollection <- function(x, k=x@best, ...) {
+	pos <- which(sapply(x@analyses, function(z) {z@opts@MAXPOPS==k}))
+	if (length(pos)==0)
+		stop('Specified k is not in the StructureCollection object.')
+	return(gelman.diag.StructureAnalysis(x@analyses[[pos]]))
 }
 

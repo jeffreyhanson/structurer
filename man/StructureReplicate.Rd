@@ -4,10 +4,12 @@
 \alias{StructureReplicate}
 \title{Create StructureReplicate object}
 \usage{
-StructureReplicate(loglik, var_loglik, alpha, matrix, sample.names, output, log,
-  mcmc)
+StructureReplicate(lnprob, loglik, var_loglik, alpha, matrix, sample.names,
+  output, log, mcmc)
 }
 \arguments{
+\item{lnprob}{\code{numeric} estimated ln probability of the model.}
+
 \item{loglik}{\code{numeric} mean negative loglikelihood of model.}
 
 \item{var_loglik}{\code{numeric} variance in negative loglikelihood of model.}

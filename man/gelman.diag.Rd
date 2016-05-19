@@ -13,14 +13,14 @@ gelman.diag(x, ...)
 
 \method{gelman.diag}{StructureAnalysis}(x, ...)
 
-\method{gelman.diag}{StructureCollection}(x, K = x@best, ...)
+\method{gelman.diag}{StructureCollection}(x, k = x@best, ...)
 }
 \arguments{
 \item{x}{\code{StructureCollection} or \code{StructureAnalysis} object.}
 
 \item{...}{arguments passed to \code{\link[coda]{gelman.diag}}.}
 
-\item{K}{\code{numeric} indicating number of populations to report statistic for if \code{x} is a \code{StructureCollection} object.}
+\item{k}{\code{numeric} indicating number of populations to report statistic for if \code{x} is a \code{StructureCollection} object.}
 }
 \description{
 This function returns the Gelman-Rubin diagnostic statistics for the negative loglikelihood of multiple Structure runs. See \code{\link[coda]{gelman.diag}} for more information.

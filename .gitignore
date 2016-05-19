@@ -15,3 +15,7 @@
 
 # structure files
 seed.txt
+
+# structure binary file
+inst/bin/structure
+inst/bin/structure.exe

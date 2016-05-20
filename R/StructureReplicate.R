@@ -96,10 +96,10 @@ sample.membership.StructureReplicate <- function(x) {
 	return(apply(x@matrix, 1, which.max))
 }
 
-#' @rdname loglik
-#' @method loglik StructureReplicate
-loglik.StructureReplicate <- function(x) {
-	return(x@loglik)
+#' @rdname logLik
+#' @method logLik StructureReplicate
+logLik.StructureReplicate <- function(object, ...) {
+	return(object@loglik)
 }
 
 #' @rdname lnprob

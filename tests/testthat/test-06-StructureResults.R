@@ -19,7 +19,7 @@ test_that('StructureResults', {
 	results
 	n.pop(results)
 	n.samples(results)
-	loglik(results)
+	logLik(results)
 	sample.membership(results)
 	sample.names(results)
 })

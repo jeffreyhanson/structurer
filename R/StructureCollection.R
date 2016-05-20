@@ -71,55 +71,98 @@ StructureCollection<-function(analyses) {
 	return(x)
 }
 
-#' Run Structure anaylsis
-#'
-#' This function analyses data using Structure.
-#'
-#' @param x \code{StructureData} object.
-#' @inheritParams StructureOpts
-#' @inheritParams ClumppOpts
-#' @param dir \code{character} with directory to use for analysis.
-#' @param clean \code{logical} should input and output files be deleted after analysis is finished?
-#' @param verbose \code{logical} should messages be printed during processing?
-#' @param threads \code{numeric} number of threads to use for processing. Defaults to 1.
-#' @seealso \code{StructureData}, \code{StructureOpts}.
-#' @examples
-#' # run Structure using low number of iterations
-#' dat <- read.StructureData(system.file('extdata', 'example_fstat_aflp.dat', package='structurer'))
-#' x <- run.Structure(dat, NUMRUNS=2, MAXPOPS=1:3, BURNIN=10, NUMREPS=10, NOADMIX=FALSE, ADMBURNIN=10)
-#' print(x)
+
+#' @rdname run.Structure
+#' @method run.Structure StructureData
 #' @export
-run.Structure<-function(x, NUMRUNS=2, MAXPOPS=1:10, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, FREQSCORR=TRUE, UPDATEFREQ=max(floor(BURNIN+NUMREPS)/1000,1),
-	M='Greedy', W=TRUE, S=FALSE, REPEATS=1000, dir=tempdir(), clean=TRUE, verbose=FALSE, threads=1)
-{
+run.Structure.StructureData<-function(x, NUMRUNS=2, MAXPOPS=1:10, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, FREQSCORR=TRUE, UPDATEFREQ=max(floor(BURNIN+NUMREPS)/1000,1), M='Greedy', W=TRUE, S=FALSE, REPEATS=1000, dir=tempdir(), clean=TRUE, verbose=FALSE, threads=1, SEED=sample.int(1e5,NUMRUNS*length(MAXPOPS))) {
+	return(run.Structure.list(
+		list(x), NUMRUNS=NUMRUNS, MAXPOPS=MAXPOPS, BURNIN=BURNIN, NUMREPS=NUMREPS, NOADMIX=NOADMIX, ADMBURNIN=ADMBURNIN, FREQSCORR=FREQSCORR,
+		M=M, W=W, S=S, REPEATS=REPEATS, dir=dir, clean=clean, verbose=verbose, threads=threads, SEED=SEED
+	)[[1]])
+}
+
+#' @rdname run.Structure
+#' @method run.Structure list
+#' @export
+run.Structure.list<-function(x, NUMRUNS=2, MAXPOPS=1:10, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, FREQSCORR=TRUE, UPDATEFREQ=max(floor(BURNIN+NUMREPS)/1000,1),
+	M='Greedy', W=TRUE, S=FALSE, REPEATS=1000, dir=file.path(tempdir(), seq_along(x)), clean=TRUE, verbose=FALSE, threads=1, SEED=sample.int(1e5,NUMRUNS*length(MAXPOPS)*length(x))) {
+	## init
+	# init tests
 	test_that('argument to MAXPOPS have at least 3 elements', expect_true(length(MAXPOPS) >= 3))
-	# init
-	sub.threads = min(threads,NUMRUNS)
-	main.threads = max(floor(threads/sub.threads),1)
-	# set up parallelisation
-	if (main.threads > 1) {
-	clust <- makeCluster(main.threads, 'PSOCK')
+	sapply(x, expect_is, 'StructureData')
+	test_that('arguments to x and dir must have equal lengths', expect_equal(length(dir), length(x)))
+	test_that('arguments dir must be unique', expect_false(any(duplicated(dir))))
+	# create table with parameters for all runs
+	run.DF <- expand.grid(run=seq_len(NUMRUNS), k=MAXPOPS, species=seq_along(x))
+	run.DF$SEED <- SEED
+	run.DF$spp.dir <- rep(dir, each=length(MAXPOPS) * NUMRUNS)
+	run.DF$k.dir <- file.path(run.DF$spp.dir, MAXPOPS)
+	run.DF$i <- seq_len(nrow(run.DF))
+	# create opts objects
+	StructureOpts.LST<- dlply(run.DF, c('species'), function(z1) {
+		z3 <- dlply(z1, c('species', 'k'), function(z2) {
+			StructureOpts(NUMRUNS=NUMRUNS, MAXPOPS=z2$k[1], BURNIN=BURNIN, NUMREPS=NUMREPS, NOADMIX=NOADMIX, ADMBURNIN=ADMBURNIN,
+			FREQSCORR=FREQSCORR, UPDATEFREQ=UPDATEFREQ, SEED=z2$SEED)
+		})
+		attributes(z3) <- NULL
+		return(z3)
+	})
+	attributes(StructureOpts.LST) <- NULL
+	clummp.opts <- ClumppOpts(M=M, W=W, S=S, REPEATS=REPEATS)
+	## prelim
+	# identify structure path
+	structure.path <- system.file('bin', 'structure', package='structurer')
+	# update permissions
+	if (!grepl(basename(structure.path), 'win'))
+		system(paste0('chmod 700 ',structure.path))
+	# create dirs
+	sapply(run.DF$k.dir, dir.create, showWarnings=FALSE, recursive=TRUE)
+	# save data to each directory
+	ret <- dlply(run.DF, c('species', 'k'), function(z) {
+		write.StructureOpts(StructureOpts.LST[[z$species[1]]][[z$k[1]]],z$k.dir[1])
+		write.StructureData(x[[z$species[1]]],file.path(z$k.dir[1], 'data.txt'))
+	})
+	## main
+	# initialize cluster
+	is.parallel.run <- (is.numeric(threads) && (threads>1)) | (is.character(threads) && (length(threads)>1))
+	if (is.parallel.run) {
+		clust <- makeCluster(threads, 'PSOCK')
 		clusterEvalQ(clust, library(structurer))
-		clusterExport(clust, c('x', 'NUMRUNS', 'BURNIN', 'NUMREPS', 'NOADMIX', 'ADMBURNIN', 'FREQSCORR',
-			'UPDATEFREQ', 'M', 'W', 'S', 'REPEATS', 'dir', 'clean', 'verbose', 'sub.threads'), envir=environment())
+		clusterExport(clust, c('run.DF', 'structure.path'), envir=environment())
+		registerDoParallel(clust)
 	}
-	# run analysis
-	lst=llply(
-		MAXPOPS,
-		function(k) {
-			if (verbose) cat('starting MAXPOPS: ',k,'\n')
-			curr.dir <- paste0(dir,'/k',k)
-			dir.create(curr.dir)
-			run.single.Structure(x, NUMRUNS=NUMRUNS, MAXPOPS=k, BURNIN=BURNIN, NUMREPS=NUMREPS, NOADMIX=NOADMIX, ADMBURNIN=ADMBURNIN, FREQSCORR=FREQSCORR, UPDATEFREQ=UPDATEFREQ, M=M, W=W, S=S, REPEATS=REPEATS, dir=curr.dir, clean=clean, verbose=verbose, threads=sub.threads)
+	# generate replicates
+	StructureReplicates.LST <- llply(
+		seq_len(nrow(run.DF)),
+		function(i) {
+			o<-system(paste0('"', structure.path, '" ', '-m ',file.path(run.DF$k.dir[i], 'mainparams.txt'),' -e ',file.path(run.DF$k.dir[i], 'extraparams.txt'),' -K ',run.DF$k[i],' -L ',n.loci(x[[run.DF$species[i]]]),' -N ',n.samples(x[[run.DF$species[i]]]),' -i ',file.path(run.DF$k.dir[i], 'data.txt'),' -o ', paste0(run.DF$k.dir[i], '/output_run_',run.DF$run[i],'.txt'), ' -D ',run.DF$SEED[i], ' > ', run.DF$k.dir[i], '/structure_run_',run.DF$run[i],'_log.txt 2>&1'), intern=TRUE)
+			# delete extra files created by structure
+			if (file.exists('seed.txt')) unlink('seed.txt')
+			if (file.exists(file.path(run.DF$k.dir[i],'seed.txt'))) unlink(file.path(run.DF$k.dir[i],'seed.txt'))
+			# read results
+			return(read.StructureReplicate(paste0(run.DF$k.dir[i], '/output_run_',run.DF$run[i],'.txt_f'), paste0(run.DF$k.dir[i], '/structure_run_',run.DF$run[i],'_log.txt')))
 		},
-		.parallel=(main.threads>1)
+		.parallel=is.parallel.run
 	)
-	# post
-	if (main.threads > 1) {
-		stopCluster(clust)
-	}
-	# return object
-	return(StructureCollection(analyses=lst))
+	# kill cluster
+	if (is.parallel.run)
+		clust <- stopCluster(clust)
+	# combine into StrucutreCollection objects
+	StructureCollection.LST <- dlply(run.DF, c('species'), function(z1) {
+		curr.analyses <- dlply(z1, c('species', 'k'), function(z2) {
+			StructureAnalysis(
+				results=StructureResults(replicates=StructureReplicates.LST[z2$i], clummp.opts, dir=z1$k.dir[1]),
+				opts=StructureOpts.LST[[z2$species[1]]][[z2$k[1]]],
+				data=x[[z2$species[1]]]
+			)
+		})
+		attributes(curr.analyses) <- NULL
+		return(StructureCollection(curr.analyses))
+	})
+	attributes(StructureCollection.LST) <- NULL
+	# return results
+	return(StructureCollection.LST)
 }
 
 #' @rdname n.loci
@@ -135,7 +178,6 @@ n.loci.StructureCollection <- function(x) {
 n.pop.StructureCollection <- function(x) {
 	return(n.pop(x@analyses[[1]]@opts))
 }
-
 
 #' @rdname n.samples
 #' @method n.samples StructureCollection
@@ -198,7 +240,6 @@ loci.names.StructureCollection <- function(x) {
 print.StructureCollection=function(x, ..., header=TRUE) {
 	if (header)
 		cat("StructureCollection object.\n\n")
-	cat('Best K:',x@best,'\n')
 	print(x@analyses[[which(sapply(x@analyses, function(z) {z@opts@MAXPOPS==x@best}))]], header=FALSE)
 }
 
@@ -245,6 +286,7 @@ delta.k.plot.StructureCollection <- function(x, main='Delta-K plot') {
 		theme_classic() +
 		xlab('Number of populations') +
 		ylab('Relative support (delta-K)') +
+		theme(axis.line.x=element_line(), axis.line.y=element_line())
 		ggtitle(main)
 }
 

@@ -113,11 +113,11 @@ sample.membership.StructureAnalysis <- function(x, threshold=NULL, ...) {
 	return(sample.membership(x@results, threshold))
 }
 
-#' @rdname loglik
-#' @method loglik StructureAnalysis
+#' @rdname logLik
+#' @method logLik StructureAnalysis
 #' @export
-loglik.StructureAnalysis <- function(x) {
-	return(loglik(x@results))
+logLik.StructureAnalysis <- function(object, ...) {
+	return(logLik(object@results))
 }
 
 #' @rdname lnprob
@@ -145,8 +145,8 @@ lnprob.StructureAnalysis <- function(x) {
 #' x <- run.single.Structure(dat, NUMRUNS=1, MAXPOPS=2, BURNIN=10,
 #'	NUMREPS=10, NOADMIX=FALSE, ADMBURNIN=10)
 #' @export
-run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, FREQSCORR=TRUE, SEED=sample.int(1e5,NUMRUNS), 
-	UPDATEFREQ=max(floor(BURNIN+NUMREPS)/1000,1), M='Greedy', W=TRUE, S=FALSE, REPEATS=1000, dir=tempdir(), clean=TRUE, verbose=FALSE, threads=1)
+run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20000, NOADMIX=FALSE, ADMBURNIN=500, FREQSCORR=TRUE,
+	UPDATEFREQ=max(floor(BURNIN+NUMREPS)/1000,1), M='Greedy', W=TRUE, S=FALSE, REPEATS=1000, dir=tempdir(), clean=TRUE, verbose=FALSE, threads=1, SEED=sample.int(1e5,NUMRUNS))
 {
 	## initialization
 	# argument checks
@@ -162,13 +162,14 @@ run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20
 	write.StructureOpts(opts,dir)
 	write.StructureData(x,file.path(dir, 'data.txt'))
 	# setup cluster
-	if (threads>1) {
+	is.parallel.run <- (is.numeric(threads) && (threads>1)) | (is.character(threads) && (length(threads)>1))
+	if (is.parallel.run) {
 		clust <- makeCluster(threads,type='PSOCK')
 		clusterEvalQ(clust, {library(structurer)})
 		clusterExport(clust, c('structure.path','dir','MAXPOPS','x', 'verbose'), envir=environment())
 		registerDoParallel(clust)
 	}
-	# run BayeScan
+	# run Structure
 	ret <- StructureAnalysis(
 			results=StructureResults(
 				replicates=llply(
@@ -182,7 +183,7 @@ run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20
 						# read results
 						return(read.StructureReplicate(paste0(dir, '/output_run_',i,'.txt_f'), paste0(dir, '/structure_run_',i,'_log.txt')))
 					},
-					.parallel=(threads>1)
+					.parallel=is.parallel.run
 				),
 				opts2,
 				dir=dir
@@ -191,7 +192,7 @@ run.single.Structure<-function(x, NUMRUNS=2, MAXPOPS=2, BURNIN=10000, NUMREPS=20
 			opts=opts
 		)
 	# kill cluster
-	if (threads>1) {
+	if (is.parallel.run) {
 		clust <- stopCluster(clust)
 	}
 	# if clean then delete files
@@ -231,6 +232,7 @@ traceplot.StructureAnalysis <- function(x, ...) {
 	# create fake vars to avoid CRAN notes
 	iteration <- NULL
 	chain <- NULL
+	loglik <- NULL
 	# extract logliks
 	ll <- data.frame(iteration=x@results@replicates[[1]]@mcmc$Rep)
 	ll <- cbind(ll, data.frame(sapply(x@results@replicates, function(y) {y@mcmc$Ln.Like})))

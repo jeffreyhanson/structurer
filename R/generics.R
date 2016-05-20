@@ -14,10 +14,11 @@ n.loci <- function(x) UseMethod('n.loci')
 #'
 #' This function returns the negative loglikelihood of a Structure analysis.
 #'
-#' @param x \code{StructureReplicate}, \code{StructureResults}, \code{StructureAnalysis} or \code{StructureCollection} object.
+#' @param object \code{StructureReplicate}, \code{StructureResults}, \code{StructureAnalysis} or \code{StructureCollection} object.
+#' @param ... not used.
 #' @return \code{numeric}.
-#' @export
-loglik <- function(x) UseMethod('loglik')
+#' @name logLik
+NULL
 
 #' Probability of the model
 #'
@@ -131,6 +132,7 @@ NULL
 #' @param x \code{StructureCollection} object.
 #' @param main \code{character} plot title.
 #' @seealso \code{\link{StructureCollection}}.
+#' @export
 loglik.plot <- function(x, main) UseMethod('loglik.plot')
 
 
@@ -141,6 +143,7 @@ loglik.plot <- function(x, main) UseMethod('loglik.plot')
 #' @param x \code{StructureCollection} object.
 #' @param main \code{character} plot title.
 #' @seealso \code{\link{StructureCollection}}.
+#' @export
 delta.k.plot <- function(x, main) UseMethod('delta.k.plot')
 
 
@@ -152,6 +155,7 @@ delta.k.plot <- function(x, main) UseMethod('delta.k.plot')
 #' @param k \code{numeric} indicating number of populations to make traceplot for if \code{x} is a \code{StructureCollection} object.
 #' @param ... not used.
 #' @seealso \code{\link{StructureCollection}}.
+#' @export
 traceplot <- function(x, ...) UseMethod('traceplot')
 
 #' Gelman-Rubin diagnostic statistics
@@ -161,6 +165,7 @@ traceplot <- function(x, ...) UseMethod('traceplot')
 #' @param k \code{numeric} indicating number of populations to report statistic for if \code{x} is a \code{StructureCollection} object.
 #' @param ... arguments passed to \code{\link[coda]{gelman.diag}}.
 #' @name gelman.diag
+#' @export
 gelman.diag <- function(x, ...) UseMethod('gelman.diag')
 
 
@@ -170,4 +175,28 @@ gelman.diag <- function(x, ...) UseMethod('gelman.diag')
 gelman.diag.default <- function(x, ...) {
 	coda::gelman.diag(x, ...)
 }
+
+#' Run Structure anaylsis
+#'
+#' This function analyses data using Structure.
+#'
+#' @param x \code{StructureData} object.
+#' @inheritParams StructureOpts
+#' @inheritParams ClumppOpts
+#' @param dir \code{character} with directory to use for analysis.
+#' @param clean \code{logical} should input and output files be deleted after analysis is finished?
+#' @param verbose \code{logical} should messages be printed during processing?
+#' @param threads \code{numeric} number of threads to use for processing. Defaults to 1.
+#' @seealso \code{StructureData}, \code{StructureOpts}.
+#' @examples
+#' # run Structure using low number of iterations
+#' dat <- read.StructureData(system.file('extdata', 'example_fstat_aflp.dat', package='structurer'))
+#' x <- run.Structure(dat, NUMRUNS=2, MAXPOPS=1:3, BURNIN=10, NUMREPS=10, NOADMIX=FALSE, ADMBURNIN=10)
+#' # run Structure for a list of two StructureData objects
+#' x2 <- run.Structure(list(dat, dat), NUMRUNS=2, MAXPOPS=1:3, BURNIN=10, NUMREPS=10, NOADMIX=FALSE, 
+#'  ADMBURNIN=10)
+#' print(x)
+#' @export
+run.Structure <- function(x, NUMRUNS, MAXPOPS, BURNIN, NUMREPS, NOADMIX, ADMBURNIN, FREQSCORR, 
+	UPDATEFREQ, M, W, S, REPEATS, dir, clean, verbose, threads, SEED) UseMethod('run.Structure')
 

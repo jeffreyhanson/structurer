@@ -100,11 +100,11 @@ sample.membership.StructureResults <- function(x, threshold=NULL, ...) {
 	return(pops)
 }
 
-#' @rdname loglik
-#' @method loglik StructureResults
+#' @rdname logLik
+#' @method logLik StructureResults
 #' @export
-loglik.StructureResults <- function(x) {
-	return(mean(sapply(x@replicates, loglik.StructureReplicate)))
+logLik.StructureResults <- function(object, ...) {
+	return(mean(sapply(object@replicates, logLik.StructureReplicate)))
 }
 
 #' @rdname lnprob

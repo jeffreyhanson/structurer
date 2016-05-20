@@ -6,9 +6,9 @@
 \usage{
 run.single.Structure(x, NUMRUNS = 2, MAXPOPS = 2, BURNIN = 10000,
   NUMREPS = 20000, NOADMIX = FALSE, ADMBURNIN = 500, FREQSCORR = TRUE,
-  SEED = sample.int(1e+05, NUMRUNS), UPDATEFREQ = max(floor(BURNIN +
-  NUMREPS)/1000, 1), M = "Greedy", W = TRUE, S = FALSE, REPEATS = 1000,
-  dir = tempdir(), clean = TRUE, verbose = FALSE, threads = 1)
+  UPDATEFREQ = max(floor(BURNIN + NUMREPS)/1000, 1), M = "Greedy",
+  W = TRUE, S = FALSE, REPEATS = 1000, dir = tempdir(), clean = TRUE,
+  verbose = FALSE, threads = 1, SEED = sample.int(1e+05, NUMRUNS))
 }
 \arguments{
 \item{x}{\code{StructureData} object.}
@@ -27,8 +27,6 @@ run.single.Structure(x, NUMRUNS = 2, MAXPOPS = 2, BURNIN = 10000,
 
 \item{FREQSCORR}{\code{logical} Allele frequencies are correlated among populations? Defaults to \code{TRUE}.}
 
-\item{SEED}{\code{numeric} Seed for random number generator. Defaults to NA so a random seed is used.}
-
 \item{UPDATEFREQ}{\code{numeric} Frequency to store updates to loglikelihood for traceplots. Defaults to yield 1000 frequencies.}
 
 \item{M}{\code{character} name of search method. Valid arguments are 'FullSearch', 'Greedy', or 'LargeKGreedy'. Defaults to 'Greedy'.}
@@ -46,6 +44,8 @@ run.single.Structure(x, NUMRUNS = 2, MAXPOPS = 2, BURNIN = 10000,
 \item{verbose}{\code{logical} should messages be printed during processing?}
 
 \item{threads}{\code{numeric} number of threads to use for processing. Defaults to 1.}
+
+\item{SEED}{\code{numeric} Seed for random number generator. Defaults to NA so a random seed is used.}
 }
 \description{
 This function analyses data using Structure. It generates replicate runs for a single MAXPOPS parameter.

@@ -17,6 +17,7 @@
 #' @importFrom parallel clusterExport
 
 #' @importFrom plyr llply
+#' @importFrom plyr dlply
 
 #' @importFrom tidyr gather
 
@@ -46,4 +47,5 @@
 #' @importFrom testthat expect_is
 #' @importFrom testthat expect_equal
 #' @importFrom testthat expect_identical
+#' @importFrom testthat expect_false
 NULL

@@ -28,8 +28,10 @@ test_that('run.Structure (parallel, list input)', {
 	# make Structure object
 	sd1 <- read.StructureData(system.file('extdata', 'example_fstat_aflp.dat', package='structurer'))
 	sd2 <- StructureData(matrix(sample(0:1, size=100, replace=TRUE), ncol=5), as.character(1:5), as.character(1:20))
-	sc <- run.Structure(list(sd1,sd2), NUMRUNS=2, MAXPOPS=1:5, BURNIN=10, NUMREPS=10, NOADMIX=FALSE, ADMBURNIN=10, M='LargeKGreedy',S=TRUE,REPEATS=100, threads=2)
+	sd3 <- StructureData(matrix(sample(0:1, size=50, replace=TRUE), ncol=10), as.character(1:10), as.character(1:5))
+	sc <- run.Structure(list(sd1,sd2, sd3), NUMRUNS=5, MAXPOPS=1:6, BURNIN=10, NUMREPS=10, NOADMIX=FALSE, ADMBURNIN=10, M='LargeKGreedy',S=TRUE,REPEATS=100, threads=2)
 	# check that objects are correctly parsed
 	expect_equal(n.loci(sd1), n.loci(sc[[1]]))
 	expect_equal(n.loci(sd2), n.loci(sc[[2]]))
+	expect_equal(n.loci(sd3), n.loci(sc[[3]]))
 })

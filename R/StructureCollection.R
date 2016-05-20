@@ -96,8 +96,8 @@ run.Structure.list<-function(x, NUMRUNS=2, MAXPOPS=1:10, BURNIN=10000, NUMREPS=2
 	# create table with parameters for all runs
 	run.DF <- expand.grid(run=seq_len(NUMRUNS), k=MAXPOPS, species=seq_along(x))
 	run.DF$SEED <- SEED
-	run.DF$spp.dir <- rep(dir, each=length(MAXPOPS) * NUMRUNS)
-	run.DF$k.dir <- file.path(run.DF$spp.dir, MAXPOPS)
+	run.DF$spp.dir <- dir[run.DF$species]
+	run.DF$k.dir <- file.path(run.DF$spp.dir, run.DF$k)
 	run.DF$i <- seq_len(nrow(run.DF))
 	# create opts objects
 	StructureOpts.LST<- dlply(run.DF, c('species'), function(z1) {

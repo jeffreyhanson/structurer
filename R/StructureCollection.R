@@ -263,12 +263,14 @@ lnprob.plot.StructureCollection <- function(x, main='', ...) {
 		})
 	})
 	dat <- do.call(rbind, unlist(dat, recursive=FALSE))
-	dat.summary <- data.frame(k=as.numeric(as.character(unique(dat$k))), lnprob=tapply(dat$lnprob, dat$k, mean))
+	dat.summary <- data.frame(k=as.numeric(as.character(unique(dat$k))), lnprob=tapply(dat$lnprob, dat$k, mean), lnprob.var=tapply(dat$lnprob, dat$k, var))
+	dat.summary$lnprob.lower <- dat.summary$lnprob - dat.summary$lnprob.var
+	dat.summary$lnprob.upper <- dat.summary$lnprob + dat.summary$lnprob.var
 	# make plot
 	ggplot() +
-		geom_violin(aes_string(x='k', y='lnprob'), data=dat) +
 		geom_line(aes_string(x='k', y='lnprob'), data=dat.summary) +
 		geom_point(aes_string(x='k', y='lnprob'), data=dat.summary) +
+		geom_errorbar(aes_string(x='k', ymin='lnprob.lower', ymax='lnprob.upper'), data=dat.summary) +
 		theme_classic() +
 		xlab('Number of populations (k)') +
 		ylab('Estimated Ln prob of data') +

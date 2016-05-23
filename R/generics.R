@@ -134,7 +134,7 @@ NULL
 #' @param main \code{character} plot title.
 #' @param ... not used.
 #' @seealso \code{\link{StructureCollection}}.
-#' @S3method lnprob.plot
+#' @export
 lnprob.plot <- function(x, main, ...) UseMethod('lnprob.plot')
 
 #' Plot delta-K values

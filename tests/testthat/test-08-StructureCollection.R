@@ -12,7 +12,7 @@ test_that('run.Structure', {
 	sample.membership(sc)
 	sample.membership(sc, 0.75)
 	summary(sc)
-	loglik.plot(sc)
+	lnprob.plot(sc)
 	delta.k.plot(sc)
 	traceplot(sc, K=1)
 	gelman.diag(sc, K=1)

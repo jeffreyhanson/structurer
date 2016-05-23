@@ -252,26 +252,27 @@ setMethod(
 		print.StructureCollection(object)
 )
 
-#' @rdname loglik.plot
-#' @method loglik.plot StructureCollection
+#' @rdname lnprob.plot
+#' @method lnprob.plot StructureCollection
 #' @export
-loglik.plot.StructureCollection <- function(x, main='') {
+lnprob.plot.StructureCollection <- function(x, main='', ...) {
 	# extract data
 	dat <- lapply(x@analyses, function(y) {
 		lapply(y@results@replicates, function(z) {
-			data.frame(k=as.character(ncol(z@matrix)), loglik=z@loglik)
+			data.frame(k=as.character(ncol(z@matrix)), lnprob=z@lnprob)
 		})
 	})
 	dat <- do.call(rbind, unlist(dat, recursive=FALSE))
-	dat.summary <- data.frame(k=as.numeric(as.character(unique(dat$k))), loglik=tapply(dat$loglik, dat$k, mean))
+	dat.summary <- data.frame(k=as.numeric(as.character(unique(dat$k))), lnprob=tapply(dat$lnprob, dat$k, mean))
 	# make plot
 	ggplot() +
-		geom_violin(aes_string(x='k', y='loglik'), data=dat) +
-		geom_line(aes_string(x='k', y='loglik'), data=dat.summary) +
-		geom_point(aes_string(x='k', y='loglik'), data=dat.summary) +
+		geom_violin(aes_string(x='k', y='lnprob'), data=dat) +
+		geom_line(aes_string(x='k', y='lnprob'), data=dat.summary) +
+		geom_point(aes_string(x='k', y='lnprob'), data=dat.summary) +
 		theme_classic() +
 		xlab('Number of populations (k)') +
-		ylab('Negative log-likelihood') +
+		ylab('Estimated Ln prob of data') +
+		theme(axis.line.x=element_line(), axis.line.y=element_line()) +
 		ggtitle(main)
 }
 
@@ -286,7 +287,7 @@ delta.k.plot.StructureCollection <- function(x, main='Delta-K plot') {
 		theme_classic() +
 		xlab('Number of populations') +
 		ylab('Relative support (delta-K)') +
-		theme(axis.line.x=element_line(), axis.line.y=element_line())
+		theme(axis.line.x=element_line(), axis.line.y=element_line()) +
 		ggtitle(main)
 }
 

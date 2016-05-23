@@ -123,7 +123,7 @@ logLik.StructureAnalysis <- function(object, ...) {
 #' @rdname lnprob
 #' @method lnprob StructureAnalysis
 #' @export
-lnprob.StructureAnalysis <- function(x) {
+lnprob.StructureAnalysis <- function(x, ...) {
 	return(lnprob(x@results))
 }
 

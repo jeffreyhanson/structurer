@@ -7,16 +7,18 @@
 \alias{lnprob.StructureResults}
 \title{Probability of the model}
 \usage{
-lnprob(x)
+lnprob(x, ...)
 
-\method{lnprob}{StructureReplicate}(x)
+\method{lnprob}{StructureReplicate}(x, ...)
 
-\method{lnprob}{StructureResults}(x)
+\method{lnprob}{StructureResults}(x, ...)
 
-\method{lnprob}{StructureAnalysis}(x)
+\method{lnprob}{StructureAnalysis}(x, ...)
 }
 \arguments{
 \item{x}{\code{StructureReplicate}, \code{StructureResults}, \code{StructureAnalysis} or \code{StructureCollection} object.}
+
+\item{...}{not used.}
 }
 \value{
 \code{numeric}.

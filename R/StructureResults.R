@@ -110,7 +110,7 @@ logLik.StructureResults <- function(object, ...) {
 #' @rdname lnprob
 #' @method lnprob StructureResults
 #' @export
-lnprob.StructureResults <- function(x) {
+lnprob.StructureResults <- function(x, ...) {
 	return(mean(sapply(x@replicates, lnprob.StructureReplicate)))
 }
 

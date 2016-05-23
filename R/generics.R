@@ -25,9 +25,10 @@ NULL
 #' This function returns the ln probability of a Structure analysis.
 #'
 #' @param x \code{StructureReplicate}, \code{StructureResults}, \code{StructureAnalysis} or \code{StructureCollection} object.
+#' @param ... not used.
 #' @return \code{numeric}.
 #' @export
-lnprob <- function(x) UseMethod('lnprob')
+lnprob <- function(x, ...) UseMethod('lnprob')
 
 #' Number of samples
 #'
@@ -125,16 +126,16 @@ NULL
 #' @name show
 NULL
 
-#' Plot negative log-likelihood values
+#' Plot estimated Ln probability of data
 #'
-#' This function plots the negative log-likelihood values in a \code{StructureCollection} object.
+#' This function plots the estimated Ln probability of the data assuming different number of populations in a \code{StructureCollection} object.
 #' 
 #' @param x \code{StructureCollection} object.
 #' @param main \code{character} plot title.
+#' @param ... not used.
 #' @seealso \code{\link{StructureCollection}}.
-#' @export
-loglik.plot <- function(x, main) UseMethod('loglik.plot')
-
+#' @S3method lnprob.plot
+lnprob.plot <- function(x, main, ...) UseMethod('lnprob.plot')
 
 #' Plot delta-K values
 #'

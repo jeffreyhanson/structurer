@@ -104,7 +104,7 @@ logLik.StructureReplicate <- function(object, ...) {
 
 #' @rdname lnprob
 #' @method lnprob StructureReplicate
-lnprob.StructureReplicate <- function(x) {
+lnprob.StructureReplicate <- function(x, ...) {
 	return(x@lnprob)
 }
 

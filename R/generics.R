@@ -153,11 +153,12 @@ delta.k.plot <- function(x, main) UseMethod('delta.k.plot')
 #' This function plots a traceplot showing the negative log-likelihood values in a \code{StructureCollection} object.
 #' 
 #' @param x \code{StructureCollection} or \code{StructureAnalysis} object.
+#' @param parameter \code{character} name of parameter to plot. Defaults to 'Ln.Like'. See column names in the \code{mcmc} slot of the \code{StrucreReplicate} objects inside \code{x}.
 #' @param k \code{numeric} indicating number of populations to make traceplot for if \code{x} is a \code{StructureCollection} object.
 #' @param ... not used.
 #' @seealso \code{\link{StructureCollection}}.
 #' @export
-traceplot <- function(x, ...) UseMethod('traceplot')
+traceplot <- function(x, parameter, ...) UseMethod('traceplot')
 
 #' Gelman-Rubin diagnostic statistics
 #'

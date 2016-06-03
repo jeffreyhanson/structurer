@@ -6,14 +6,17 @@
 \alias{traceplot.StructureCollection}
 \title{Traceplot}
 \usage{
-traceplot(x, ...)
+traceplot(x, parameter, ...)
 
-\method{traceplot}{StructureAnalysis}(x, ...)
+\method{traceplot}{StructureAnalysis}(x, parameter = "Ln.Like", ...)
 
-\method{traceplot}{StructureCollection}(x, k = x@best, ...)
+\method{traceplot}{StructureCollection}(x, parameter = "Ln.Like",
+  k = x@best, ...)
 }
 \arguments{
 \item{x}{\code{StructureCollection} or \code{StructureAnalysis} object.}
+
+\item{parameter}{\code{character} name of parameter to plot. Defaults to 'Ln.Like'. See column names in the \code{mcmc} slot of the \code{StrucreReplicate} objects inside \code{x}.}
 
 \item{...}{not used.}
 

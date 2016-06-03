@@ -48,4 +48,5 @@
 #' @importFrom testthat expect_equal
 #' @importFrom testthat expect_identical
 #' @importFrom testthat expect_false
+#' @importFrom testthat expect_length
 NULL

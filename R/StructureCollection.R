@@ -296,11 +296,11 @@ delta.k.plot.StructureCollection <- function(x, main='Delta-K plot') {
 #' @rdname traceplot
 #' @method traceplot StructureCollection
 #' @export
-traceplot.StructureCollection <- function(x, k=x@best, ...) {
+traceplot.StructureCollection <- function(x, parameter='Ln.Like', k=x@best, ...) {
 	pos <- which(sapply(x@analyses, function(z) {z@opts@MAXPOPS==k}))
 	if (length(pos)==0)
 		stop('Specified k is not in the StructureCollection object.')
-	return(traceplot.StructureAnalysis(x@analyses[[pos]]))
+	return(traceplot.StructureAnalysis(x@analyses[[pos]], parameter=parameter))
 }
 
 #' @rdname gelman.diag

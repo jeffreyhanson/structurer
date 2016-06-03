@@ -13,6 +13,7 @@ test_that('run.single.Structure (default parameters)', {
 	logLik(sa)
 	lnprob(sa)
 	traceplot(sa)
+	traceplot(sa, 'Alpha')
 	gelman.diag(sa)
 })
 

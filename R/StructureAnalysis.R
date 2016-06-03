@@ -228,26 +228,32 @@ setMethod(
 #' @rdname traceplot
 #' @method traceplot StructureAnalysis
 #' @export
-traceplot.StructureAnalysis <- function(x, ...) {
+traceplot.StructureAnalysis <- function(x, parameter='Ln.Like', ...) {
 	# create fake vars to avoid CRAN notes
 	iteration <- NULL
 	chain <- NULL
-	loglik <- NULL
+	param <- NULL
+	# check that parameter is valid
+	expect_length(parameter,1)
+	expect_true(
+		parameter %in% names(x@results@replicates[[1]]@mcmc)[-1],
+		info=paste0('argument to parameter must be one of ',paste(names(x@results@replicates[[1]]@mcmc)[-1], collapse=','))
+	)
 	# extract logliks
 	ll <- data.frame(iteration=x@results@replicates[[1]]@mcmc$Rep)
-	ll <- cbind(ll, data.frame(sapply(x@results@replicates, function(y) {y@mcmc$Ln.Like})))
-	ll <- ll[rowSums(ll[,-1])<0,]
+	ll <- cbind(ll, data.frame(sapply(x@results@replicates, function(y) {y@mcmc[[parameter]]})))
+	ll <- ll[rowSums(ll[,-1])<0 || is.na(ll[,-1]),]
 	if (ncol(ll)==2) names(ll)[2] <- 'X1'
-	ll <- gather(ll, chain, loglik, -iteration)
+	ll <- gather(ll, chain, param, -iteration)
 	ll$chain <- as.factor(as.numeric(gsub('X', '', ll$chain, fixed=TRUE)))
 	curr.burnin <- ifelse(sum(grepl('Admixture Burnin complete', x@results@replicates[[1]]@log, fixed=TRUE))>0, x@opts@ADMBURNIN, 0)+x@opts@BURNIN
 	# make plot
-	ggplot(data=ll, aes(x=iteration, y=loglik, color=chain)) +
-		coord_cartesian(xlim=range(ll$iteration), ylim=range(ll$loglik)) +
+	ggplot(data=ll, aes(x=iteration, y=param, color=chain)) +
+		coord_cartesian(xlim=range(ll$iteration), ylim=range(ll$param, na.rm=TRUE)) +
 		geom_rect(xmin=-10, xmax=curr.burnin,
-			ymin=min(ll$loglik)*1.5, ymax=max(ll$loglik)*0.5,
+			ymin=min(ll$param,na.rm=TRUE)*1.5, ymax=max(ll$param,na.rm=TRUE)*0.5,
 			color='grey80', fill='grey80') +
-		geom_line() + xlab('Iteration') + ylab('Negative loglikelihood') +
+		geom_line() + xlab('Iteration') + ylab(parameter) +
 		theme_classic() + theme(axis.line.x=element_line(), axis.line.y=element_line())
 }
 

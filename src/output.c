@@ -261,12 +261,12 @@ PrintUpdate (int rep, int *Geno, int *PreGeno, double *Alpha, double *Fst, doubl
     PrintNET (stdout, P, NumAlleles, 1, 0);
   }
   
-    if (COMPUTEPROB) {
-		if (rep > BURNIN + 2) {
+  if (COMPUTEPROB) {
+    if (rep > BURNIN + 2) {
       printf ("  %.0f  ", like);
       printf ("  %.0f ", logprob);
     } else {
-      printf ("  NA    NA  ");
+      printf (" %6.0f    NA  ", CalcLike (Geno, PreGeno, Q, P, Recessive, NULL, NULL));
     }
   }
   

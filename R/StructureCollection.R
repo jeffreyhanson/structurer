@@ -161,7 +161,7 @@ run.Structure.list<-function(x, NUMRUNS=2, MAXPOPS=1:10, BURNIN=10000, NUMREPS=2
 			opts=StructureOpts.LST[[df1$species[1]]][[df1$k[1]]],
 			data=x[[df1$species[1]]]
 		)
-	})
+	}, .parallel=is.parallel.run)
 	# kill cluster
 	if (is.parallel.run) clust <- stopCluster(clust)
 	## post processing

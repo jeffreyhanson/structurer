@@ -123,7 +123,7 @@ run.Structure.list<-function(x, NUMRUNS=2, MAXPOPS=1:10, BURNIN=10000, NUMREPS=2
 		write.StructureOpts(StructureOpts.LST[[z$species[1]]][[z$k[1]]],z$k.dir[1])
 		write.StructureData(x[[z$species[1]]],file.path(z$k.dir[1], 'data.txt'))
 	})
-	## main
+	## structure processing
 	# initialize cluster
 	is.parallel.run <- (is.numeric(threads) && (threads>1)) | (is.character(threads) && (length(threads)>1))
 	if (is.parallel.run) {
@@ -146,22 +146,33 @@ run.Structure.list<-function(x, NUMRUNS=2, MAXPOPS=1:10, BURNIN=10000, NUMREPS=2
 		.parallel=is.parallel.run
 	)
 	# kill cluster
-	if (is.parallel.run)
-		clust <- stopCluster(clust)
+	if (is.parallel.run) clust <- stopCluster(clust)
+	## clumpp processing
+	if (is.parallel.run) {
+		clust <- makeCluster(threads, 'PSOCK')
+		clusterEvalQ(clust, library(structurer))
+		clusterExport(clust, c('StructureReplicates.LST', 'clummp.opts', 'StructureOpts.LST'), envir=environment())
+		registerDoParallel(clust)
+	}
 	# combine into StrucutreCollection objects
-	StructureCollection.LST <- dlply(run.DF, c('species'), function(z1) {
-		curr.analyses <- dlply(z1, c('species', 'k'), function(z2) {
-			StructureAnalysis(
-				results=StructureResults(replicates=StructureReplicates.LST[z2$i], clummp.opts, dir=z1$k.dir[1]),
-				opts=StructureOpts.LST[[z2$species[1]]][[z2$k[1]]],
-				data=x[[z2$species[1]]]
-			)
-		})
-		attributes(curr.analyses) <- NULL
-		return(StructureCollection(curr.analyses))
+	StructureAnalysis.LST <- dlply(run.DF, c('species', 'k'), function(df1) {
+		StructureAnalysis(
+			results=StructureResults(replicates=StructureReplicates.LST[df1$i], clummp.opts, dir=df1$k.dir[1]),
+			opts=StructureOpts.LST[[df1$species[1]]][[df1$k[1]]],
+			data=x[[df1$species[1]]]
+		)
+	})
+	# kill cluster
+	if (is.parallel.run) clust <- stopCluster(clust)
+	## post processing
+	StructureCollection.LST <- dlply(run.DF, c('species'), function(df1) {
+		curr.analyses.pos <- grepl(paste0('^',df1$species[1],'\\.*.$'), names(StructureAnalysis.LST))
+		curr.analyses.LST <- StructureAnalysis.LST[curr.analyses.pos]
+		attributes(curr.analyses.LST) <- NULL
+		StructureCollection(analyses=curr.analyses.LST)
 	})
 	attributes(StructureCollection.LST) <- NULL
-	# return results
+	## exports
 	return(StructureCollection.LST)
 }
 

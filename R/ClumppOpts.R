@@ -103,7 +103,7 @@ C 1
 # opts dependent parameters-  these are hard coded into the file
 R 1
 M ",switch(x@M, 'FullSearch'='1', 'Greedy'='2', 'LargeKGreedy'='3'),"
-W ",c('2','1')[as.integer(x@W)+1],"
+W ",as.integer(x@W),"
 S ",c('2','1')[as.integer(x@S)+1],"
 
 # - Additional options for the Greedy and LargeKGreedy algorithm (M = 2 or 3) -
